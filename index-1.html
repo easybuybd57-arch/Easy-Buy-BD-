@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy Buy BD - Online Shopping</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8;color:#222}
+header{background:#087b50;color:white;padding:18px;text-align:center}
+header h1{margin:0;font-size:28px}
+header p{margin:6px 0 0}
+nav{background:#075d3e;padding:12px;text-align:center}
+nav a{color:white;text-decoration:none;margin:0 10px;font-weight:bold}
+.hero{background:linear-gradient(120deg,#087b50,#18b77a);color:white;text-align:center;padding:35px 15px}
+.hero h2{font-size:27px;margin:0 0 10px}
+.search{display:block;width:90%;max-width:500px;margin:20px auto;padding:13px;border:0;border-radius:8px;font-size:16px}
+.container{padding:18px;max-width:1100px;margin:auto}
+h2.section{text-align:center;color:#087b50}
+.categories{display:flex;justify-content:center;flex-wrap:wrap;gap:10px}
+.categories button{border:0;background:#087b50;color:white;padding:10px 16px;border-radius:20px}
+.products{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.product{background:white;border-radius:12px;padding:12px;text-align:center;box-shadow:0 2px 8px #ddd}
+.product .emoji{font-size:55px;background:#eef8f2;padding:15px;border-radius:10px}
+.product h3{margin:10px 0 5px}
+.price{color:#087b50;font-weight:bold;font-size:18px}
+.product button{background:#087b50;color:white;border:0;padding:10px 14px;border-radius:7px;width:100%;margin-top:8px}
+.cart{background:white;padding:16px;border-radius:12px;margin-top:22px}
+.order-btn{background:#128c4a;color:white;border:0;padding:14px;width:100%;border-radius:8px;font-size:17px;font-weight:bold;margin-top:12px}
+footer{background:#075d3e;color:white;text-align:center;padding:22px;margin-top:25px}
+@media(min-width:650px){.products{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<header>
+<h1>Easy Buy BD</h1>
+<p>আপনার পছন্দের সব পণ্য এক জায়গায়!</p>
+</header>
+<nav>
+<a href="#home">হোম</a>
+<a href="#products">পণ্য</a>
+<a href="#cart">কার্ট</a>
+<a href="#contact">যোগাযোগ</a>
+</nav>
+<section class="hero" id="home">
+<h2>Welcome to Easy Buy BD</h2>
+<p>সহজে কিনুন, নিশ্চিন্তে থাকুন।</p>
+</section>
+<input class="search" id="search" placeholder="আপনার পছন্দের পণ্য খুঁজুন...">
+<div class="container">
+<h2 class="section">পণ্যের ক্যাটাগরি</h2>
+<div class="categories">
+<button onclick="filterProducts('সব')">সব</button>
+<button onclick="filterProducts('ইলেকট্রনিক্স')">ইলেকট্রনিক্স</button>
+<button onclick="filterProducts('ফ্যাশন')">ফ্যাশন</button>
+<button onclick="filterProducts('ঘর')">ঘরের পণ্য</button>
+<button onclick="filterProducts('অন্যান্য')">অন্যান্য</button>
+</div>
+<h2 class="section" id="products">আমাদের পণ্য</h2>
+<div class="products" id="productList"></div>
+<div class="cart" id="cart">
+<h2>🛒 আপনার শপিং কার্ট</h2>
+<div id="cartItems">এখনো কোনো পণ্য যোগ করা হয়নি।</div>
+<h3 id="total">মোট: ৳০</h3>
+<button class="order-btn" onclick="orderWhatsApp()">WhatsApp-এ অর্ডার করুন</button>
+</div>
+</div>
+<footer id="contact">
+<h3>Easy Buy BD</h3>
+<p>WhatsApp: +8801705512676</p>
+<p>© 2026 Easy Buy BD. All Rights Reserved.</p>
+</footer>
+<script>
+const products=[
+{name:"স্মার্টফোন",price:12000,emoji:"📱",category:"ইলেকট্রনিক্স"},
+{name:"হেডফোন",price:850,emoji:"🎧",category:"ইলেকট্রনিক্স"},
+{name:"টি-শার্ট",price:550,emoji:"👕",category:"ফ্যাশন"},
+{name:"জুতা",price:1200,emoji:"👟",category:"ফ্যাশন"},
+{name:"ঘড়ি",price:950,emoji:"⌚",category:"ফ্যাশন"},
+{name:"ব্যাগ",price:700,emoji:"🎒",category:"ফ্যাশন"},
+{name:"ল্যাম্প",price:450,emoji:"💡",category:"ঘর"},
+{name:"কাপ",price:180,emoji:"☕",category:"ঘর"}
+];
+let cart=[];
+function showProducts(list=products){
+document.getElementById("productList").innerHTML=list.map((p)=>{
+let i=products.indexOf(p);
+return `<div class="product"><div class="emoji">${p.emoji}</div><h3>${p.name}</h3><div class="price">৳${p.price}</div><button onclick="addCart(${i})">কার্টে যোগ করুন</button></div>`;
+}).join("");
+}
+function filterProducts(category){
+showProducts(category==="সব"?products:products.filter(p=>p.category===category));
+}
+function addCart(i){cart.push(products[i]);showCart();}
+function showCart(){
+document.getElementById("cartItems").innerHTML=cart.length?cart.map(p=>`${p.emoji} ${p.name} — ৳${p.price}`).join("<br>"):"এখনো কোনো পণ্য যোগ করা হয়নি।";
+document.getElementById("total").innerText="মোট: ৳"+cart.reduce((s,p)=>s+p.price,0);
+}
+function orderWhatsApp(){
+if(cart.length===0){alert("আগে কার্টে পণ্য যোগ করুন");return;}
+let message="আমি Easy Buy BD থেকে অর্ডার করতে চাই:\n";
+cart.forEach(p=>message+=p.name+" - ৳"+p.price+"\n");
+message+="মোট: ৳"+cart.reduce((sum,p)=>sum+p.price,0);
+window.open("https://wa.me/8801705512676?text="+encodeURIComponent(message),"_blank");
+}
+document.getElementById("search").addEventListener("input",e=>{
+let q=e.target.value.toLowerCase();
+showProducts(products.filter(p=>p.name.toLowerCase().includes(q)));
+});
+showProducts();
+</script>
+</body>
+</html>
