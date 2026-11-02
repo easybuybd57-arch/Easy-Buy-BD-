@@ -29,6 +29,28 @@ h2.section{text-align:center;color:#087b50}
 footer{background:#075d3e;color:white;text-align:center;padding:22px;margin-top:25px}
 @media(min-width:650px){.products{grid-template-columns:repeat(4,1fr)}}
 .order-btn{background:#128c4a;color:white;border:0;padding:14px;width:100%;border-radius:8px;font-size:17px;font-weight:bold;margin-top:12px}
+
+.hero{
+background:linear-gradient(125deg,#064e3b 0%,#087b50 48%,#20b981 100%);
+color:white;text-align:center;padding:42px 18px 38px;
+border-radius:0 0 28px 28px;position:relative;overflow:hidden;
+}
+.hero:before,.hero:after{
+content:"";position:absolute;border-radius:50%;
+background:rgba(255,255,255,.09);pointer-events:none
+}
+.hero:before{width:220px;height:220px;top:-100px;right:-55px}
+.hero:after{width:160px;height:160px;bottom:-95px;left:-35px}
+.hero-inner{position:relative;z-index:1;max-width:850px;margin:auto}
+.hero-badge{display:inline-block;background:#fff;color:#087b50;
+padding:7px 15px;border-radius:30px;font-size:13px;font-weight:bold}
+.hero h2{font-size:clamp(27px,6vw,43px);line-height:1.25;margin:17px 0 10px}
+.hero p{font-size:16px;line-height:1.7;margin:0 auto 18px}
+.hero-art{font-size:clamp(38px,9vw,65px);margin:15px 0;letter-spacing:8px}
+.hero-cta{display:inline-block;background:#fff;color:#087b50;
+text-decoration:none;padding:13px 25px;border-radius:30px;
+font-weight:bold;box-shadow:0 5px 18px #003b2c55}
+
 </style>
 </head>
 <body>
@@ -43,8 +65,13 @@ footer{background:#075d3e;color:white;text-align:center;padding:22px;margin-top:
 <a href="#contact">যোগাযোগ</a>
 </nav>
 <section class="hero" id="home">
-<h2>Welcome to Easy Buy BD</h2>
-<p>সহজে কিনুন, নিশ্চিন্তে থাকুন।</p>
+<div class="hero-inner">
+<span class="hero-badge">🛍️ EASY BUY BD — অনলাইন শপিং</span>
+<h2>সেরা পণ্য, সেরা দামে!</h2>
+<p>আপনার পছন্দের সবকিছু এখন এক জায়গায়। সহজে পছন্দ করুন, ঘরে বসেই অর্ডার করুন।</p>
+<div class="hero-art">🎧 👕 📱 👜</div>
+<a class="hero-cta" href="#products">এখনই কেনাকাটা করুন →</a>
+</div>
 </section>
 <input class="search" id="search" placeholder="আপনার পছন্দের পণ্য খুঁজুন...">
 <div class="container">
