@@ -70,44 +70,97 @@ footer{background:#075d3e;color:white;text-align:center;padding:22px;margin-top:
 <p>যোগাযোগ: আপনার ফোন নম্বর এখানে যোগ করুন</p>
 <p>© 2026 Easy Buy BD. All Rights Reserved.</p>
 </footer>
-<script>
-const products=[
-{name:"স্মার্টফোন",price:12000,emoji:"📱",category:"ইলেকট্রনিক্স"},
-{name:"হেডফোন",price:850,emoji:"🎧",category:"ইলেকট্রনিক্স"},
-{name:"টি-শার্ট",price:550,emoji:"👕",category:"ফ্যাশন"},
-{name:"জুতা",price:1200,emoji:"👟",category:"ফ্যাশন"},
-{name:"ঘড়ি",price:950,emoji:"⌚",category:"ফ্যাশন"},
-{name:"ব্যাগ",price:700,emoji:"🎒",category:"ফ্যাশন"},
-{name:"ল্যাম্প",price:450,emoji:"💡",category:"ঘর"},
-{name:"কাপ",price:180,emoji:"☕",category:"ঘর"}
-];
-let cart=[];
-function showProducts(list=products){
-document.getElementById("productList").innerHTML=list.map((p)=>{
-let i=products.indexOf(p);
-return `<div class="product"><div class="emoji">${p.emoji}</div><h3>${p.name}</h3><div class="price">৳${p.price}</div><button onclick="addCart(${i})">কার্টে যোগ করুন</button></div>`;
-}).join("");
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBL_17lHmW4pD4qpfROgjh5zz0ELHqPSIw",
+  authDomain: "easy-buy-bd-ef147.firebaseapp.com",
+  projectId: "easy-buy-bd-ef147",
+  storageBucket: "easy-buy-bd-ef147.firebasestorage.app",
+  messagingSenderId: "246521445162",
+  appId: "1:246521445162:web:d21e43015352ec008d7c53"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const products = [];
+let cart = [];
+let selectedCategory = "সব";
+let searchText = "";
+
+function safeText(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  }[c]));
 }
-function filterProducts(category){
-showProducts(category==="সব"?products:products.filter(p=>p.category===category));
+
+function showProducts() {
+  let list = products.filter(p =>
+    (selectedCategory === "সব" || p.category === selectedCategory) &&
+    String(p.name).toLowerCase().includes(searchText)
+  );
+
+  document.getElementById("productList").innerHTML = list.map(p => {
+    const i = products.indexOf(p);
+    const visual = p.image
+      ? `<img src="${safeText(p.image)}" alt="${safeText(p.name)}" style="width:100%;height:130px;object-fit:cover;border-radius:8px">`
+      : `<div class="emoji">${safeText(p.emoji || "🛍️")}</div>`;
+
+    return `<div class="product">${visual}<h3>${safeText(p.name)}</h3><div class="price">৳${Number(p.price)}</div><button onclick="addCart(${i})">কার্টে যোগ করুন</button></div>`;
+  }).join("") || "<p>এখনো কোনো পণ্য পাওয়া যায়নি।</p>";
 }
-function addCart(i){cart.push(products[i]);showCart();}
-function showCart(){
-document.getElementById("cartItems").innerHTML=cart.length?cart.map(p=>`${p.emoji} ${p.name} — ৳${p.price}`).join("<br>"):"এখনো কোনো পণ্য যোগ করা হয়নি।";
-document.getElementById("total").innerText="মোট: ৳"+cart.reduce((s,p)=>s+p.price,0);
+
+window.filterProducts = function(category) {
+  selectedCategory = category;
+  showProducts();
+};
+
+window.addCart = function(i) {
+  if (!products[i]) return;
+  cart.push(products[i]);
+  showCart();
+};
+
+function showCart() {
+  document.getElementById("cartItems").innerHTML = cart.length
+    ? cart.map(p => `${safeText(p.emoji || "🛍️")} ${safeText(p.name)} — ৳${Number(p.price)}`).join("<br>")
+    : "এখনো কোনো পণ্য যোগ করা হয়নি।";
+
+  document.getElementById("total").innerText =
+    "মোট: ৳" + cart.reduce((s,p) => s + Number(p.price), 0);
 }
-document.getElementById("search").addEventListener("input",e=>{
-let q=e.target.value.toLowerCase();
-showProducts(products.filter(p=>p.name.toLowerCase().includes(q)));
+
+document.getElementById("search").addEventListener("input", e => {
+  searchText = e.target.value.toLowerCase();
+  showProducts();
 });
-function orderWhatsApp(){
-if(cart.length===0){alert("আগে কার্টে পণ্য যোগ করুন");return;}
-let message="আমি Easy Buy BD থেকে অর্ডার করতে চাই:\n";
-cart.forEach(p=>message+=p.name+" - ৳"+p.price+"\n");
-message+="মোট: ৳"+cart.reduce((sum,p)=>sum+p.price,0);
-window.open("https://wa.me/8801705512676?text="+encodeURIComponent(message),"_blank");
-}
-showProducts();
+
+window.orderWhatsApp = function() {
+  if (cart.length === 0) {
+    alert("আগে কার্টে পণ্য যোগ করুন");
+    return;
+  }
+
+  let message = "আমি Easy Buy BD থেকে অর্ডার করতে চাই:\n";
+  cart.forEach(p => message += p.name + " - ৳" + p.price + "\n");
+  message += "মোট: ৳" + cart.reduce((sum,p) => sum + Number(p.price), 0);
+
+  window.open("https://wa.me/8801705512676?text=" + encodeURIComponent(message), "_blank");
+};
+
+onSnapshot(collection(db, "products"), snapshot => {
+  products.length = 0;
+  snapshot.forEach(d => products.push({id:d.id, ...d.data()}));
+  showProducts();
+}, error => {
+  document.getElementById("productList").innerText =
+    "পণ্য লোড হয়নি। ইন্টারনেট ও Firebase Rules পরীক্ষা করুন।";
+});
+
+showCart();
 </script>
 </body>
 </html>

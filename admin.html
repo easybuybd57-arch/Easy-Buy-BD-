@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Easy Buy BD Admin</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f1f5f9;margin:0;padding:20px}
+.box{max-width:500px;margin:25px auto;background:white;padding:22px;border-radius:14px;box-shadow:0 3px 15px #ddd}
+h2{text-align:center;color:#087b45}
+input,select,button{width:100%;padding:13px;margin:7px 0;box-sizing:border-box;border:1px solid #ccc;border-radius:8px;font-size:16px}
+button{background:#087b45;color:white;border:0;font-weight:bold}
+.delete{background:#dc2626}
+.item{border:1px solid #ddd;padding:12px;margin:10px 0;border-radius:9px}
+.item img{width:65px;height:65px;object-fit:cover}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>🛒 Easy Buy BD Admin</h2>
+
+<div id="login">
+<h3>Admin Login</h3>
+<input id="email" type="email" placeholder="আপনার ইমেইল">
+<input id="password" type="password" placeholder="পাসওয়ার্ড">
+<button id="loginBtn">Login</button>
+<p id="message"></p>
+</div>
+
+<div id="panel" class="hidden">
+<h3>নতুন পণ্য যোগ করুন</h3>
+<input id="name" placeholder="পণ্যের নাম">
+<input id="price" type="number" placeholder="পণ্যের দাম">
+<select id="category">
+<option>ইলেকট্রনিক্স</option>
+<option>ফ্যাশন</option>
+<option>ঘর</option>
+<option>অন্যান্য</option>
+</select>
+<input id="emoji" placeholder="ইমোজি (যেমন 📱)" value="🛍️">
+<input id="image" type="url" placeholder="ছবির URL (ঐচ্ছিক)">
+<button id="addBtn">পণ্য যোগ করুন</button>
+<button id="logoutBtn" style="background:#475569">Logout</button>
+<p id="status"></p>
+<hr>
+<h3>আপনার পণ্যসমূহ</h3>
+<div id="list">লোড হচ্ছে...</div>
+</div>
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import {getFirestore,collection,addDoc,getDocs,deleteDoc,doc} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyBL_17lHmW4pD4qpfROgjh5zz0ELHqPSIw",
+authDomain:"easy-buy-bd-ef147.firebaseapp.com",
+projectId:"easy-buy-bd-ef147",
+storageBucket:"easy-buy-bd-ef147.firebasestorage.app",
+messagingSenderId:"246521445162",
+appId:"1:246521445162:web:d21e43015352ec008d7c53"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const ADMIN_UID="idWU2lGPmleyQW2L1ExB45IiIz02";
+
+const $=id=>document.getElementById(id);
+
+$("loginBtn").onclick=async()=>{
+try{
+$("message").innerText="লগইন হচ্ছে...";
+await signInWithEmailAndPassword(auth,$("email").value,$("password").value);
+}catch(e){$("message").innerText="লগইন হয়নি: "+e.message;}
+};
+
+onAuthStateChanged(auth,user=>{
+if(user && user.uid===ADMIN_UID){
+$("login").classList.add("hidden");
+$("panel").classList.remove("hidden");
+loadProducts();
+}else{
+$("panel").classList.add("hidden");
+$("login").classList.remove("hidden");
+if(user) signOut(auth);
+}
+});
+
+$("logoutBtn").onclick=()=>signOut(auth);
+
+$("addBtn").onclick=async()=>{
+const name=$("name").value.trim();
+const price=Number($("price").value);
+if(!name || price<=0){$("status").innerText="নাম ও সঠিক দাম দিন";return;}
+try{
+await addDoc(collection(db,"products"),{
+name,price,category:$("category").value,
+emoji:$("emoji").value.trim()||"🛍️",
+image:$("image").value.trim(),
+createdAt:Date.now()
+});
+$("status").innerText="পণ্য যোগ হয়েছে!";
+$("name").value="";
+$("price").value="";
+$("image").value="";
+loadProducts();
+}catch(e){$("status").innerText="সমস্যা: "+e.message;}
+};
+
+async function loadProducts(){
+try{
+const snap=await getDocs(collection(db,"products"));
+$("list").innerHTML="";
+snap.forEach(d=>{
+const p=d.data();
+const div=document.createElement("div");
+div.className="item";
+const title=document.createElement("b");
+title.textContent=p.name+" — ৳"+p.price;
+const del=document.createElement("button");
+del.textContent="পণ্য মুছুন";
+del.className="delete";
+del.onclick=async()=>{
+if(confirm("পণ্যটি মুছে ফেলবেন?")){
+await deleteDoc(doc(db,"products",d.id));
+loadProducts();
+}
+};
+div.append(title,del);
+$("list").append(div);
+});
+if(snap.empty)$("list").innerText="এখনো কোনো পণ্য নেই";
+}catch(e){$("list").innerText="পণ্য লোড হয়নি: "+e.message;}
+}
+</script>
+</body>
+</html>
