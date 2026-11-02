@@ -5,21 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Easy Buy BD Admin</title>
 <style>
-body{font-family:Arial,sans-serif;background:#f1f5f9;margin:0;padding:20px}
-.box{max-width:500px;margin:25px auto;background:white;padding:22px;border-radius:14px;box-shadow:0 3px 15px #ddd}
+body{font-family:Arial,sans-serif;background:#f1f5f9;margin:0;padding:15px}
+.box{max-width:500px;margin:20px auto;background:white;padding:20px;border-radius:14px;box-shadow:0 3px 15px #ddd}
 h2{text-align:center;color:#087b45}
 input,select,button{width:100%;padding:13px;margin:7px 0;box-sizing:border-box;border:1px solid #ccc;border-radius:8px;font-size:16px}
 button{background:#087b45;color:white;border:0;font-weight:bold}
 .delete{background:#dc2626}
 .item{border:1px solid #ddd;padding:12px;margin:10px 0;border-radius:9px}
-.item img{width:65px;height:65px;object-fit:cover}
+.item img{width:75px;height:75px;object-fit:cover;border-radius:8px}
 .hidden{display:none}
+#preview{max-width:150px;max-height:150px;display:none;margin:10px auto}
 </style>
 </head>
 <body>
 <div class="box">
 <h2>🛒 Easy Buy BD Admin</h2>
-
 <div id="login">
 <h3>Admin Login</h3>
 <input id="email" type="email" placeholder="আপনার ইমেইল">
@@ -38,8 +38,10 @@ button{background:#087b45;color:white;border:0;font-weight:bold}
 <option>ঘর</option>
 <option>অন্যান্য</option>
 </select>
-<input id="emoji" placeholder="ইমোজি (যেমন 📱)" value="🛍️">
-<input id="image" type="url" placeholder="ছবির URL (ঐচ্ছিক)">
+<input id="emoji" placeholder="ইমোজি" value="🛍️">
+<label>গ্যালারি থেকে পণ্যের ছবি নির্বাচন করুন</label>
+<input id="photo" type="file" accept="image/*">
+<img id="preview" alt="ছবির প্রিভিউ">
 <button id="addBtn">পণ্য যোগ করুন</button>
 <button id="logoutBtn" style="background:#475569">Logout</button>
 <p id="status"></p>
@@ -63,18 +65,56 @@ messagingSenderId:"246521445162",
 appId:"1:246521445162:web:d21e43015352ec008d7c53"
 };
 
+const ADMIN_UID="idWU2lGPmleyQW2L1ExB45IiIz02";
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
-const ADMIN_UID="idWU2lGPmleyQW2L1ExB45IiIz02";
-
 const $=id=>document.getElementById(id);
 
+$("photo").onchange=()=>{
+const file=$("photo").files[0];
+if(!file)return;
+if(!file.type.startsWith("image/")){
+$("status").innerText="সঠিক ছবি নির্বাচন করুন";
+return;
+}
+const reader=new FileReader();
+reader.onload=()=>{
+$("preview").src=reader.result;
+$("preview").style.display="block";
+};
+reader.readAsDataURL(file);
+};
+
+function resizeImage(file){
+return new Promise((resolve,reject)=>{
+const reader=new FileReader();
+reader.onerror=reject;
+reader.onload=()=>{
+const img=new Image();
+img.onerror=reject;
+img.onload=()=>{
+const max=800;
+const scale=Math.min(1,max/Math.max(img.width,img.height));
+const canvas=document.createElement("canvas");
+canvas.width=Math.round(img.width*scale);
+canvas.height=Math.round(img.height*scale);
+canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+resolve(canvas.toDataURL("image/jpeg",0.65));
+};
+img.src=reader.result;
+};
+reader.readAsDataURL(file);
+});
+}
+
 $("loginBtn").onclick=async()=>{
-try{
 $("message").innerText="লগইন হচ্ছে...";
-await signInWithEmailAndPassword(auth,$("email").value,$("password").value);
-}catch(e){$("message").innerText="লগইন হয়নি: "+e.message;}
+try{
+await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
+}catch(e){
+$("message").innerText="লগইন হয়নি: "+e.message;
+}
 };
 
 onAuthStateChanged(auth,user=>{
@@ -85,7 +125,7 @@ loadProducts();
 }else{
 $("panel").classList.add("hidden");
 $("login").classList.remove("hidden");
-if(user) signOut(auth);
+if(user)signOut(auth);
 }
 });
 
@@ -94,23 +134,40 @@ $("logoutBtn").onclick=()=>signOut(auth);
 $("addBtn").onclick=async()=>{
 const name=$("name").value.trim();
 const price=Number($("price").value);
-if(!name || price<=0){$("status").innerText="নাম ও সঠিক দাম দিন";return;}
+const file=$("photo").files[0];
+if(!name||price<=0){
+$("status").innerText="পণ্যের নাম ও সঠিক দাম দিন";
+return;
+}
+$("addBtn").disabled=true;
+$("status").innerText="পণ্য যোগ হচ্ছে...";
 try{
+let image="";
+if(file){
+image=await resizeImage(file);
+if(image.length>850000){
+throw new Error("ছবিটি অনেক বড়। ছোট ছবি নির্বাচন করুন।");
+}
+}
 await addDoc(collection(db,"products"),{
 name,price,category:$("category").value,
 emoji:$("emoji").value.trim()||"🛍️",
-image:$("image").value.trim(),
-createdAt:Date.now()
+image
 });
-$("status").innerText="পণ্য যোগ হয়েছে!";
 $("name").value="";
 $("price").value="";
-$("image").value="";
+$("photo").value="";
+$("preview").style.display="none";
+$("status").innerText="পণ্য সফলভাবে যোগ হয়েছে!";
 loadProducts();
-}catch(e){$("status").innerText="সমস্যা: "+e.message;}
+}catch(e){
+$("status").innerText="সমস্যা: "+e.message;
+}
+$("addBtn").disabled=false;
 };
 
 async function loadProducts(){
+$("list").innerText="লোড হচ্ছে...";
 try{
 const snap=await getDocs(collection(db,"products"));
 $("list").innerHTML="";
@@ -118,6 +175,11 @@ snap.forEach(d=>{
 const p=d.data();
 const div=document.createElement("div");
 div.className="item";
+if(p.image){
+const img=document.createElement("img");
+img.src=p.image;
+div.append(img);
+}
 const title=document.createElement("b");
 title.textContent=p.name+" — ৳"+p.price;
 const del=document.createElement("button");
@@ -133,7 +195,9 @@ div.append(title,del);
 $("list").append(div);
 });
 if(snap.empty)$("list").innerText="এখনো কোনো পণ্য নেই";
-}catch(e){$("list").innerText="পণ্য লোড হয়নি: "+e.message;}
+}catch(e){
+$("list").innerText="পণ্য লোড হয়নি: "+e.message;
+}
 }
 </script>
 </body>
