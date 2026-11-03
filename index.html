@@ -15,10 +15,17 @@ nav a{color:#263650;text-decoration:none;margin:0;padding:10px 15px;font-weight:
 nav a:hover{background:#eaf2ff;color:#1261d6}
 .admin-link{background:#1261d6;color:white;text-decoration:none;padding:10px 18px;border-radius:9px;font-weight:bold}
 .admin-link:hover{background:#084ba9}
-.hero{margin:22px auto;width:90%;background:linear-gradient(120deg,#0756c9,#3189f5);color:white;padding:42px 7%;border-radius:20px;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:210px}
-.hero h1{font-size:clamp(27px,5vw,42px);margin-bottom:12px}
-.hero p{line-height:1.7}
-.hero a{display:inline-block;margin-top:17px;background:white;color:#0756c9;padding:12px 22px;border-radius:9px;text-decoration:none;font-weight:bold}
+.banner-slider{width:90%;aspect-ratio:8/3;margin:22px auto;position:relative;overflow:hidden;border-radius:16px;background:linear-gradient(120deg,#0756c9,#3189f5)}
+.banner-track{width:100%;height:100%;display:flex;transition:transform .6s ease}
+.banner-slide{min-width:100%;height:100%;position:relative}
+.banner-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.banner-fallback{width:100%;height:100%;display:grid;place-items:center;text-align:center;color:white;padding:15px}
+.banner-fallback h2{font-size:clamp(18px,4vw,38px)}
+.banner-arrow{position:absolute;top:50%;transform:translateY(-50%);border:0;border-radius:50%;width:38px;height:38px;background:#ffffffd9;color:#0756c9;font-size:24px;cursor:pointer}
+.banner-prev{left:12px}.banner-next{right:12px}
+.banner-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:7px}
+.banner-dots button{width:9px;height:9px;border:0;border-radius:50%;background:#ffffff80;cursor:pointer}
+.banner-dots button.active{background:white}
 .section{width:90%;margin:28px auto}
 .section h2{font-size:24px;margin-bottom:18px}
 .search{width:100%;padding:14px;border:1px solid #dbe4f2;border-radius:10px;font-size:16px;margin-bottom:17px;outline:none}
@@ -47,7 +54,7 @@ header{padding:13px 4%}
 .logo{font-size:25px}
 nav{width:100%;justify-content:center;gap:5px}
 nav a{font-size:13px;padding:9px 11px}
-.hero{padding:30px 7%;margin-top:15px}
+.banner-slider{margin-top:15px}
 .section{width:92%}
 .products{grid-template-columns:repeat(2,minmax(0,1fr))}
 .photo{height:180px;font-size:52px}
@@ -66,13 +73,17 @@ nav a{font-size:13px;padding:9px 11px}
  </nav>
 </header>
 
-<section class="hero" id="home">
- <div>
-  <h1>আপনার পছন্দের কেনাকাটা<br>এখন আরও সহজ!</h1>
-  <p>সেরা পণ্য, সেরা দাম — ঘরে বসেই অর্ডার করুন Easy Buy BD থেকে।</p>
-  <a href="#products">এখনই কেনাকাটা করুন →</a>
+<section class="banner-slider" id="home">
+ <div class="banner-track" id="bannerTrack">
+  <div class="banner-slide">
+   <div class="banner-fallback">
+    <h2>Easy Buy BD<br>আপনার পছন্দের কেনাকাটা এখন আরও সহজ!</h2>
+   </div>
+  </div>
  </div>
- <div style="font-size:75px">🛍️</div>
+ <button class="banner-arrow banner-prev" id="bannerPrev" aria-label="Previous">&#8249;</button>
+ <button class="banner-arrow banner-next" id="bannerNext" aria-label="Next">&#8250;</button>
+ <div class="banner-dots" id="bannerDots"></div>
 </section>
 
 <section class="section" id="products">
@@ -263,6 +274,74 @@ onSnapshot(collection(db,"products"),snapshot=>{
 },error=>{
  $("productsList").innerHTML='<p class="empty">পণ্য লোড হয়নি। Firebase সংযোগ বা Firestore Rules পরীক্ষা করুন।</p>';
  console.error("Firestore error:",error);
+});
+
+
+// Easy Buy BD Banner Slider
+const bannerTrack = document.getElementById("bannerTrack");
+const bannerDots = document.getElementById("bannerDots");
+const bannerPrev = document.getElementById("bannerPrev");
+const bannerNext = document.getElementById("bannerNext");
+let bannerIndex = 0;
+let bannerTimer = null;
+
+function showBanner(index) {
+ const slides = bannerTrack.children;
+ if (!slides.length) return;
+ bannerIndex = (index + slides.length) % slides.length;
+ bannerTrack.style.transform = `translateX(-${bannerIndex * 100}%)`;
+ [...bannerDots.children].forEach((dot,i)=>{
+  dot.classList.toggle("active",i===bannerIndex);
+ });
+}
+
+function renderBanners(banners) {
+ bannerTrack.innerHTML = "";
+ bannerDots.innerHTML = "";
+
+ if (!banners.length) {
+  bannerTrack.innerHTML = '<div class="banner-slide"><div class="banner-fallback"><h2>Easy Buy BD<br>আপনার পছন্দের কেনাকাটা এখন আরও সহজ!</h2></div></div>';
+  bannerPrev.style.display = "none";
+  bannerNext.style.display = "none";
+  return;
+ }
+
+ banners.forEach((banner,i)=>{
+  const slide = document.createElement("div");
+  slide.className = "banner-slide";
+  const img = document.createElement("img");
+  img.src = banner.image;
+  img.alt = "Easy Buy BD Banner";
+  slide.appendChild(img);
+  bannerTrack.appendChild(slide);
+
+  const dot = document.createElement("button");
+  dot.type = "button";
+  dot.setAttribute("aria-label", "Banner " + (i+1));
+  dot.addEventListener("click",()=>showBanner(i));
+  bannerDots.appendChild(dot);
+ });
+
+ const multiple = banners.length > 1;
+ bannerPrev.style.display = multiple ? "block" : "none";
+ bannerNext.style.display = multiple ? "block" : "none";
+ bannerIndex = 0;
+ showBanner(0);
+
+ if (bannerTimer) clearInterval(bannerTimer);
+ if (multiple) bannerTimer = setInterval(()=>showBanner(bannerIndex+1),4500);
+}
+
+bannerPrev.addEventListener("click",()=>showBanner(bannerIndex-1));
+bannerNext.addEventListener("click",()=>showBanner(bannerIndex+1));
+
+onSnapshot(collection(db,"banners"), snapshot=>{
+ const banners = [];
+ snapshot.forEach(d=>banners.push({id:d.id,...d.data()}));
+ banners.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+ renderBanners(banners);
+}, error=>{
+ console.error("Banner load error:",error);
 });
 
 </script>

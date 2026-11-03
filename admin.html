@@ -43,6 +43,17 @@ button{background:#087b45;color:white;border:0;font-weight:bold}
 <input id="photo" type="file" accept="image/*">
 <img id="preview" alt="ছবির প্রিভিউ">
 <button id="addBtn">পণ্য যোগ করুন</button>
+
+<hr>
+<h3>🖼️ হোমপেজ ব্যানার পরিচালনা</h3>
+<label>গ্যালারি থেকে ব্যানার ছবি নির্বাচন করুন</label>
+<input id="bannerPhoto" type="file" accept="image/*">
+<img id="bannerPreview" alt="ব্যানার প্রিভিউ" style="width:100%;display:none;margin:10px 0;border-radius:8px">
+<button id="addBannerBtn">ব্যানার যোগ করুন</button>
+<p id="bannerStatus"></p>
+<h3>আপনার ব্যানারসমূহ</h3>
+<div id="bannerList">লোড হচ্ছে...</div>
+
 <button id="logoutBtn" style="background:#475569">Logout</button>
 <p id="status"></p>
 <hr>
@@ -122,6 +133,7 @@ if(user && user.uid===ADMIN_UID){
 $("login").classList.add("hidden");
 $("panel").classList.remove("hidden");
 loadProducts();
+loadBanners();
 }else{
 $("panel").classList.add("hidden");
 $("login").classList.remove("hidden");
@@ -165,6 +177,108 @@ $("status").innerText="সমস্যা: "+e.message;
 }
 $("addBtn").disabled=false;
 };
+
+
+// Banner image preview
+$("bannerPhoto").onchange=()=>{
+ const file=$("bannerPhoto").files[0];
+ if(!file)return;
+ if(!file.type.startsWith("image/")){
+  $("bannerStatus").innerText="সঠিক ছবি নির্বাচন করুন";
+  return;
+ }
+ const reader=new FileReader();
+ reader.onload=()=>{
+  $("bannerPreview").src=reader.result;
+  $("bannerPreview").style.display="block";
+ };
+ reader.readAsDataURL(file);
+};
+
+function resizeBanner(file){
+ return new Promise((resolve,reject)=>{
+  const reader=new FileReader();
+  reader.onerror=reject;
+  reader.onload=()=>{
+   const img=new Image();
+   img.onerror=reject;
+   img.onload=()=>{
+    const max=1400;
+    const scale=Math.min(1,max/Math.max(img.width,img.height));
+    const canvas=document.createElement("canvas");
+    canvas.width=Math.round(img.width*scale);
+    canvas.height=Math.round(img.height*scale);
+    canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+    resolve(canvas.toDataURL("image/jpeg",0.7));
+   };
+   img.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+ });
+}
+
+$("addBannerBtn").onclick=async()=>{
+ const file=$("bannerPhoto").files[0];
+ if(!file){
+  $("bannerStatus").innerText="আগে একটি ব্যানার ছবি নির্বাচন করুন";
+  return;
+ }
+ $("addBannerBtn").disabled=true;
+ $("bannerStatus").innerText="ব্যানার আপলোড হচ্ছে...";
+ try{
+  const image=await resizeBanner(file);
+  if(image.length>850000)throw new Error("ছবিটি অনেক বড়। ছোট ছবি নির্বাচন করুন।");
+  await addDoc(collection(db,"banners"),{
+   image,
+   createdAt:Date.now()
+  });
+  $("bannerPhoto").value="";
+  $("bannerPreview").style.display="none";
+  $("bannerStatus").innerText="ব্যানার সফলভাবে যোগ হয়েছে!";
+  loadBanners();
+ }catch(e){
+  $("bannerStatus").innerText="সমস্যা: "+e.message;
+ }
+ $("addBannerBtn").disabled=false;
+};
+
+async function loadBanners(){
+ $("bannerList").innerText="লোড হচ্ছে...";
+ try{
+  const snap=await getDocs(collection(db,"banners"));
+  $("bannerList").innerHTML="";
+  snap.forEach(d=>{
+   const b=d.data();
+   const div=document.createElement("div");
+   div.className="item";
+   if(b.image){
+    const img=document.createElement("img");
+    img.src=b.image;
+    img.style.width="100%";
+    img.style.height="auto";
+    div.append(img);
+   }
+   const del=document.createElement("button");
+   del.textContent="ব্যানার মুছুন";
+   del.className="delete";
+   del.onclick=async()=>{
+    if(confirm("এই ব্যানারটি মুছে ফেলবেন?")){
+     try{
+      await deleteDoc(doc(db,"banners",d.id));
+      loadBanners();
+     }catch(e){
+      $("bannerStatus").innerText="মুছতে সমস্যা: "+e.message;
+     }
+    }
+   };
+   div.append(del);
+   $("bannerList").append(div);
+  });
+  if(snap.empty)$("bannerList").innerText="এখনো কোনো ব্যানার নেই";
+ }catch(e){
+  $("bannerList").innerText="ব্যানার লোড হয়নি: "+e.message;
+ }
+}
 
 async function loadProducts(){
 $("list").innerText="লোড হচ্ছে...";
