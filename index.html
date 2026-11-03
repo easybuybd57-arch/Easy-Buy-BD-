@@ -22,6 +22,7 @@ nav a:hover{background:#eaf2ff;color:#1261d6}
 .section{width:90%;margin:28px auto}
 .section h2{font-size:24px;margin-bottom:18px}
 .search{width:100%;padding:14px;border:1px solid #dbe4f2;border-radius:10px;font-size:16px;margin-bottom:17px;outline:none}
+nav{display:flex;align-items:center;gap:12px;padding:12px 5%;background:#075d3e}nav .nav-search{flex:1;min-width:0;padding:11px 14px;border:0;border-radius:25px;font-size:15px;outline:none}nav a{color:white;text-decoration:none;font-weight:bold;white-space:nowrap}
 .categories{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:22px}
 .categories button{border:0;background:#e5efff;color:#155bc1;padding:10px 17px;border-radius:22px;font-weight:bold;cursor:pointer}
 .categories button.active,.categories button:hover{background:#1261d6;color:white}
@@ -60,8 +61,7 @@ nav a{font-size:13px;padding:9px 11px}
   <a class="admin-link" href="admin.html">Admin</a>
  </div>
  <nav>
-  <a href="#home">Home</a>
-  <a href="#products">Product</a>
+  <input class="nav-search" id="search" type="search" placeholder="🔍 পণ্যের নাম লিখে খুঁজুন...">
   <a href="#cart">Cart 🛒</a>
  </nav>
 </header>
