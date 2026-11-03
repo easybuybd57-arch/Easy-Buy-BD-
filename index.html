@@ -31,8 +31,10 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f4f7fc;color:#17233b}
 header{background:#fff;padding:12px 5%;display:block;box-shadow:0 2px 12px #14264b12;position:sticky;top:0;z-index:5}
-.logo{font-size:25px;font-weight:900;color:#1261d6}
+.logo{display:flex;align-items:center;justify-content:center;gap:10px;font-size:34px;line-height:1;font-weight:900;color:#1261d6;letter-spacing:-1px}
 .logo span{color:#17233b}
+.logo-mark{width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(145deg,#1769e8,#0646a8);box-shadow:0 5px 13px #1261d638}
+.logo-mark svg{width:29px;height:29px;display:block;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
  .header-top{display:flex;align-items:center;justify-content:center;gap:12px;text-align:center} nav{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
 nav a{color:#263650;text-decoration:none;margin:0;padding:10px 15px;font-weight:bold;border-radius:9px;transition:.2s}
 nav a:hover{background:#eaf2ff;color:#1261d6}
@@ -103,7 +105,9 @@ nav a[href="#cart"]{
 footer{background:#102b50;color:white;text-align:center;padding:25px;margin-top:35px;line-height:1.8}
 @media(max-width:600px){
 header{padding:13px 4%}
-.logo{font-size:25px}
+.logo{font-size:29px;gap:8px}
+.logo-mark{width:40px;height:40px;flex-basis:40px;border-radius:12px}
+.logo-mark svg{width:25px;height:25px}
 nav{width:100%;justify-content:center;gap:5px}
 nav a{font-size:13px;padding:9px 11px}
 .banner-slider{margin-top:15px}
@@ -151,7 +155,7 @@ nav a{font-size:13px;padding:9px 11px}
 <body>
 <header>
  <div class="header-top">
-  <div class="logo">Easy Buy <span>BD</span></div>
+  <div class="logo"><span class="logo-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 4h2l2.2 10.2a2 2 0 0 0 2 1.6h8.5a2 2 0 0 0 1.9-1.4L21 8H6"/><circle cx="10" cy="20" r="1.2"/><circle cx="18" cy="20" r="1.2"/><path d="m10 10 2 2 4-4"/></svg></span>Easy Buy <span>BD</span></div>
  </div>
  <nav>
   <input class="nav-search" id="search" type="search" placeholder="🔍 পণ্যের নাম লিখে খুঁজুন...">
