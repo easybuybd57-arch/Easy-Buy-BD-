@@ -31,7 +31,7 @@ nav a:hover{background:#eaf2ff;color:#1261d6}
 .search{width:100%;padding:14px;border:1px solid #dbe4f2;border-radius:10px;font-size:16px;margin-bottom:17px;outline:none}
 nav{display:flex;align-items:center;gap:8px;padding:8px 5%;background:transparent}nav .nav-search{flex:1;min-width:0;height:44px;padding:10px 18px;border:0;border-radius:25px;font-size:15px;outline:none;background:#f1f5f9;color:#263650}nav a{color:#263650;background:#f1f5f9;text-decoration:none;font-size:13px;padding:7px 10px;border-radius:20px;font-weight:bold;white-space:nowrap}
 
-.products-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.products-title-row h2{font-size:24px;margin:0}.products-cart-link{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 17px;border-radius:22px;background:linear-gradient(110deg,#1261d6,#3189f5);color:#fff;text-decoration:none;font-size:14px;font-weight:800;white-space:nowrap;box-shadow:0 5px 13px #1261d62b}.products-cart-link:hover{background:#084ba9}\nnav .nav-search::placeholder{
+nav .nav-search::placeholder{
  color:#aeb8c6;
  opacity:1;
  font-weight:300;
@@ -127,7 +127,7 @@ nav a{font-size:13px;padding:9px 11px}
  </div>
  <nav>
   <input class="nav-search" id="search" type="search" placeholder="🔍 পণ্যের নাম লিখে খুঁজুন...">
-
+  <a href="#cart">Cart 🛒</a>
  </nav>
 </header>
 
@@ -145,7 +145,7 @@ nav a{font-size:13px;padding:9px 11px}
 </section>
 
 <section class="section" id="products">
- <div class="products-title-row"><h2>আমাদের পণ্যসমূহ</h2><a class="products-cart-link" href="#cart">🛒 Cart</a></div>
+ <h2>আমাদের পণ্যসমূহ</h2>
  <div class="categories">
   <button class="active" data-cat="all">সব পণ্য</button>
   <button data-cat="electronics">ইলেকট্রনিক্স</button>
@@ -161,9 +161,8 @@ nav a{font-size:13px;padding:9px 11px}
  <div class="cart">
   <div class="cart-items-wrap"><div class="cart-items-title"><b>আপনার পণ্য</b><span>কার্টের তালিকা</span></div><div id="cartItems"><div class="empty-cart"><div class="empty-cart-icon">🛒</div><b>আপনার কার্ট এখন খালি!</b><p>পছন্দের পণ্য বেছে নিয়ে কার্টে যোগ করুন।</p><a href="#products">পণ্য দেখুন <span>→</span></a></div></div></div>
   <div class="cart-total-row"><span>সর্বমোট</span><div class="total" id="total">৳০</div></div>
-  <div class="checkout-heading"><span>📦</span><div><b>ডেলিভারি তথ্য</b><small>অর্ডার সম্পন্ন করতে আপনার তথ্য দিন</small></div></div>
-  <div class="checkout-fields"><div class="checkout-field"><label for="customerName">আপনার নাম</label><span class="checkout-field-icon" aria-hidden="true">👤</span><input id="customerName" maxlength="80" autocomplete="name" placeholder="আপনার পুরো নাম"></div><div class="checkout-field"><label for="customerPhone">মোবাইল নাম্বার</label><span class="checkout-field-icon" aria-hidden="true">📱</span><input id="customerPhone" type="tel" inputmode="numeric" maxlength="11" autocomplete="tel" placeholder="01XXXXXXXXX"></div><div class="checkout-field"><label for="customerAddress">ঠিকানা</label><span class="checkout-field-icon" aria-hidden="true">📍</span><textarea id="customerAddress" maxlength="300" rows="3" autocomplete="street-address" placeholder="সম্পূর্ণ ডেলিভারি ঠিকানা লিখুন"></textarea></div></div>
-<p id="orderStatus"></p>
+  <div class="checkout-heading"><span>📦</span><div><b>ডেলিভারি তথ্য</b><small>অর্ডার সম্পন্ন করতে তথ্য দিন</small></div></div>
+  <div class="checkout-fields"><div class="checkout-field"><label for="customerName">আপনার নাম</label><span class="checkout-field-icon" aria-hidden="true">👤</span><input id="customerName" maxlength="80" autocomplete="name" placeholder="আপনার পুরো নাম"></div><div class="checkout-field"><label for="customerPhone">মোবাইল নাম্বার</label><span class="checkout-field-icon" aria-hidden="true">📱</span><input id="customerPhone" type="tel" inputmode="numeric" maxlength="11" autocomplete="tel" placeholder="01XXXXXXXXX"></div><div class="checkout-field"><label for="customerAddress">ঠিকানা</label><span class="checkout-field-icon" aria-hidden="true">📍</span><textarea id="customerAddress" maxlength="300" rows="3" autocomplete="street-address" placeholder="সম্পূর্ণ ডেলিভারি ঠিকানা লিখুন"></textarea></div></div><p id="orderStatus"></p>
   <button class="order" id="orderBtn">অর্ডার নিশ্চিত করুন ও WhatsApp পাঠান <span>→</span></button>
   <p class="cart-safe-note">🔒 আপনার তথ্য অর্ডার সম্পন্ন করার জন্য ব্যবহার করা হবে।</p>
  </div>
@@ -207,7 +206,7 @@ const cart={};
 let category="all";
 
 const $=id=>document.getElementById(id);
-old delivery toggle JSconst money=n=>Number(n||0).toLocaleString("en-IN");
+const money=n=>Number(n||0).toLocaleString("en-IN");
 
 function categoryKey(value){
  const map={
