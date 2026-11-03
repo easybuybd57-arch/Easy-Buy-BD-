@@ -82,6 +82,41 @@ nav a{font-size:13px;padding:9px 11px}
 .products{grid-template-columns:repeat(2,minmax(0,1fr))}
 .photo{height:180px;font-size:52px}
 }
+
+/* Premium shopping cart section */
+#cart{max-width:850px;margin:42px auto 55px}
+.cart-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:17px;padding:22px 24px;border-radius:20px;background:linear-gradient(120deg,#102b50,#1769d8);color:#fff;box-shadow:0 12px 28px rgba(16,43,80,.15)}
+.cart-heading h2{margin:5px 0;font-size:23px;color:#fff}
+.cart-heading p{margin:4px 0 0;color:#dbeafe;font-size:13px}
+.cart-kicker{font-size:10px;letter-spacing:1.6px;font-weight:800;color:#b9d5ff}
+.cart-bag{width:55px;height:55px;flex-shrink:0;border-radius:17px;display:grid;place-items:center;background:#ffffff20;font-size:28px}
+#cart .cart{padding:0;border:1px solid #e4eaf3;border-radius:19px;overflow:hidden;box-shadow:0 10px 30px rgba(25,59,112,.08)}
+.cart-items-wrap{padding:20px 21px}
+.cart-items-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;color:#172b4d}
+.cart-items-title span{font-size:12px;color:#8290a5}
+#cartItems .empty-cart{padding:25px 12px 28px;text-align:center;border:1px dashed #d6e2f1;border-radius:15px;background:linear-gradient(180deg,#f8fbff,#fff)}
+.empty-cart-icon{width:62px;height:62px;margin:0 auto 10px;border-radius:20px;background:#eaf2ff;display:grid;place-items:center;font-size:30px}
+.empty-cart>b{display:block;color:#203553;font-size:16px}
+.empty-cart p{font-size:13px;color:#8290a5;margin:7px 0 13px}
+.empty-cart a{display:inline-block;padding:9px 15px;border-radius:9px;background:#eaf2ff;color:#1769d8;text-decoration:none;font-weight:700;font-size:13px}
+.cart-item{padding:14px 0;border-bottom:1px solid #edf1f7}
+.cart-item>div:first-child{color:#243650;font-size:14px;line-height:1.7}
+.cart-item button{min-width:31px;font-size:17px}
+.cart-total-row{margin:0 20px;padding:16px 0;border-top:1px solid #e9eef5;display:flex;justify-content:space-between;align-items:center;color:#53647c;font-weight:700}
+.cart-total-row .total{margin:0;color:#145bc0;font-size:25px;font-weight:900}
+.checkout-heading{display:flex;align-items:center;gap:11px;padding:17px 21px;background:#f5f8fd;border-top:1px solid #e9eef5;border-bottom:1px solid #e9eef5}
+.checkout-heading>span{width:38px;height:38px;border-radius:12px;background:#e5efff;display:grid;place-items:center;font-size:19px}
+.checkout-heading b,.checkout-heading small{display:block}
+.checkout-heading b{font-size:14px;color:#203553}
+.checkout-heading small{font-size:11px;color:#8290a5;margin-top:3px}
+.checkout-fields{padding:13px 20px 0}
+.checkout-fields input,.checkout-fields textarea{margin:7px 0;padding:13px 14px;border:1px solid #dfe7f1;border-radius:11px;background:#fbfcff;font-size:14px}
+.checkout-fields input:focus,.checkout-fields textarea:focus{outline:none;border-color:#1769d8;box-shadow:0 0 0 3px #1769d81a}
+#orderStatus{margin:4px 20px;color:#1769d8;font-size:13px}
+#cart .order{width:calc(100% - 40px);margin:10px 20px 0;border-radius:12px;background:linear-gradient(110deg,#12a65a,#078447);box-shadow:0 6px 15px #07844725;font-size:15px}
+#cart .order span{margin-left:5px}
+.cart-safe-note{text-align:center;color:#8794a7;font-size:11px;padding:0 10px 16px;margin:10px 0 0}
+@media(max-width:600px){#cart{margin:30px auto 40px}.cart-heading{padding:18px;border-radius:16px}.cart-heading h2{font-size:20px}.cart-bag{width:47px;height:47px;font-size:24px}.cart-items-wrap{padding:16px}.cart-total-row{margin:0 16px}.checkout-fields{padding:10px 15px 0}#cart .order{width:calc(100% - 30px);margin-left:15px;margin-right:15px}}
 </style>
 </head>
 <body>
@@ -122,12 +157,14 @@ nav a{font-size:13px;padding:9px 11px}
 </section>
 
 <section class="section" id="cart">
- <h2>🛒 আপনার শপিং কার্ট</h2>
+ <div class="cart-heading"><div><span class="cart-kicker">EASY BUY BD · YOUR CART</span><h2>🛒 আপনার শপিং কার্ট</h2><p>পছন্দের পণ্যগুলো এক জায়গায়, অর্ডার করুন সহজেই।</p></div><div class="cart-bag">🛍️</div></div>
  <div class="cart">
-  <div id="cartItems"><p class="empty">আপনার কার্ট এখন খালি।</p></div>
-  <div class="total" id="total">মোট: ৳০</div>
-  <input id="customerName" maxlength="80" placeholder="আপনার নাম"><input id="customerPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="মোবাইল নম্বর (01XXXXXXXXX)"><textarea id="customerAddress" maxlength="300" rows="3" placeholder="সম্পূর্ণ ডেলিভারি ঠিকানা"></textarea><p id="orderStatus"></p>
-  <button class="order" id="orderBtn">অর্ডার নিশ্চিত করুন ও WhatsApp পাঠান</button>
+  <div class="cart-items-wrap"><div class="cart-items-title"><b>আপনার পণ্য</b><span>কার্টের তালিকা</span></div><div id="cartItems"><div class="empty-cart"><div class="empty-cart-icon">🛒</div><b>আপনার কার্ট এখন খালি!</b><p>পছন্দের পণ্য বেছে নিয়ে কার্টে যোগ করুন।</p><a href="#products">পণ্য দেখুন <span>→</span></a></div></div></div>
+  <div class="cart-total-row"><span>সর্বমোট</span><div class="total" id="total">৳০</div></div>
+  <div class="checkout-heading"><span>📦</span><div><b>ডেলিভারি তথ্য</b><small>অর্ডার সম্পন্ন করতে তথ্য দিন</small></div></div>
+  <div class="checkout-fields"><input id="customerName" maxlength="80" placeholder="আপনার নাম"><input id="customerPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="মোবাইল নম্বর (01XXXXXXXXX)"><textarea id="customerAddress" maxlength="300" rows="3" placeholder="সম্পূর্ণ ডেলিভারি ঠিকানা"></textarea></div><p id="orderStatus"></p>
+  <button class="order" id="orderBtn">অর্ডার নিশ্চিত করুন ও WhatsApp পাঠান <span>→</span></button>
+  <p class="cart-safe-note">🔒 আপনার তথ্য অর্ডার সম্পন্ন করার জন্য ব্যবহার করা হবে।</p>
  </div>
 </section>
 
@@ -249,7 +286,7 @@ function showCart(){
  );
 
  if(!items.length){
-  $("cartItems").innerHTML='<p class="empty">আপনার কার্ট এখন খালি।</p>';
+  $("cartItems").innerHTML='<div class="empty-cart"><div class="empty-cart-icon">🛒</div><b>আপনার কার্ট এখন খালি!</b><p>পছন্দের পণ্য বেছে নিয়ে কার্টে যোগ করুন।</p><a href="#products">পণ্য দেখুন <span>→</span></a></div>';
  }else{
   $("cartItems").innerHTML=items.map(([id,item])=>{
    const p=products.find(x=>x.id===id);
