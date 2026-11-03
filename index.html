@@ -13,8 +13,8 @@ header{background:#fff;padding:12px 5%;display:block;box-shadow:0 2px 12px #1426
  .header-top{display:flex;align-items:center;justify-content:space-between;gap:12px} nav{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
 nav a{color:#263650;text-decoration:none;margin:0;padding:10px 15px;font-weight:bold;border-radius:9px;transition:.2s}
 nav a:hover{background:#eaf2ff;color:#1261d6}
-nav a:last-child{background:#1261d6;color:white;padding:10px 18px}
-nav a:last-child:hover{background:#084ba9}
+.admin-link{background:#1261d6;color:white;text-decoration:none;padding:10px 18px;border-radius:9px;font-weight:bold}
+.admin-link:hover{background:#084ba9}
 .hero{margin:22px auto;width:90%;background:linear-gradient(120deg,#0756c9,#3189f5);color:white;padding:42px 7%;border-radius:20px;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:210px}
 .hero h1{font-size:clamp(27px,5vw,42px);margin-bottom:12px}
 .hero p{line-height:1.7}
@@ -55,8 +55,15 @@ nav a{font-size:13px;padding:9px 11px}
 </head>
 <body>
 <header>
- <div class="logo">Easy Buy <span>BD</span></div>
- <nav><a href="#home">হোম</a><a href="#products">পণ্য</a><a href="#cart">কার্ট 🛒</a><a href="admin.html">Admin</a></nav>
+ <div class="header-top">
+  <div class="logo">Easy Buy <span>BD</span></div>
+  <a class="admin-link" href="admin.html">Admin</a>
+ </div>
+ <nav>
+  <a href="#home">Home</a>
+  <a href="#products">Product</a>
+  <a href="#cart">Cart 🛒</a>
+ </nav>
 </header>
 
 <section class="hero" id="home">
