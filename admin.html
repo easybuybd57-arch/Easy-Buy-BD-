@@ -260,7 +260,7 @@ async function loadOrders(){
    select.value=o.status||"pending";
    const save=document.createElement("button");save.textContent="স্ট্যাটাস Save করুন";
    save.onclick=async()=>{save.disabled=true;try{await updateDoc(doc(db,"orders",d.id),{status:select.value,updatedAt:Date.now()});$("ordersStatus").innerText="স্ট্যাটাস আপডেট হয়েছে";}catch(e){$("ordersStatus").innerText="আপডেট হয়নি: "+e.message;}save.disabled=false;};
-   const wa=document.createElement("a");wa.href="https://wa.me/88"+String(o.phone||"").replace(/\\D/g,"")+"?text="+encodeURIComponent("আসসালামু আলাইকুম "+(o.customerName||"")+", আপনার Easy Buy BD অর্ডারের আপডেট: "+(orderStatusLabels[select.value]||select.value));wa.target="_blank";wa.rel="noopener";wa.textContent="গ্রাহককে WhatsApp করুন";wa.style.cssText="display:block;margin:10px 0;color:#087b45;font-weight:700;text-decoration:none";
+   const wa=document.createElement("a");wa.href="https://wa.me/88"+String(o.phone||"").replace(/\D/g,"")+"?text="+encodeURIComponent("আসসালামু আলাইকুম "+(o.customerName||"")+", আপনার Easy Buy BD অর্ডারের আপডেট: "+(orderStatusLabels[select.value]||select.value));wa.target="_blank";wa.rel="noopener";wa.textContent="গ্রাহককে WhatsApp করুন";wa.style.cssText="display:block;margin:10px 0;color:#087b45;font-weight:700;text-decoration:none";
    const date=document.createElement("small");date.textContent=o.createdAt?new Date(o.createdAt).toLocaleString("bn-BD"):"";
    card.append(title,info,select,save,wa,date);$("ordersList").append(card);
   });
