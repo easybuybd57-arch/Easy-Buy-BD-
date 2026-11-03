@@ -148,7 +148,7 @@ hr{border:0;border-top:1px solid var(--line);margin:20px 0}
 </details></section>
 <section id="productsSection" class="panel-section">
  <div class="section-heading"><div class="section-icon">🛒</div><div><h3>আপনার পণ্যসমূহ</h3><p class="section-note">প্রকাশিত পণ্য দেখুন এবং প্রয়োজন হলে মুছুন।</p></div></div>
- <label for="productSearch">পণ্য খুঁজুন</label><input id="productSearch" type="search" placeholder="পণ্যের নাম লিখুন..."><div id="list">লোড হচ্ছে...</div>
+ <label for="productSearch">পণ্য খুঁজুন</label><input id="productSearch" type="search" placeholder="পণ্যের নাম লিখুন..."><p id="productPageInfo" class="section-note" aria-live="polite"></p><div id="list">লোড হচ্ছে...</div><div style="display:flex;gap:10px;margin-top:14px"><button id="productPrevBtn" type="button" style="flex:1" disabled>← আগের পৃষ্ঠা</button><button id="productNextBtn" type="button" style="flex:1" disabled>পরের পৃষ্ঠা →</button></div>
 </section>
 <button id="logoutBtn" class="logout-btn">Logout / নিরাপদে বের হন</button>
 </div>
@@ -158,7 +158,7 @@ hr{border:0;border-top:1px solid var(--line);margin:20px 0}
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut,setPersistence,inMemoryPersistence} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import {getFirestore,collection,addDoc,getDocs,deleteDoc,doc,getDoc,setDoc,updateDoc,query,orderBy} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import {getFirestore,collection,addDoc,getDocs,deleteDoc,doc,getDoc,setDoc,updateDoc,query,orderBy,documentId,limit,startAfter,getCountFromServer} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const firebaseConfig={
 apiKey:"AIzaSyBL_17lHmW4pD4qpfROgjh5zz0ELHqPSIw",
@@ -247,7 +247,9 @@ $("logoutBtn").onclick=()=>signOut(auth);
 $("refreshOrdersBtn").onclick=loadOrders;
 $("orderSearch").addEventListener("input",loadOrders);
 $("orderFilter").addEventListener("change",loadOrders);
-$("productSearch").addEventListener("input",loadProducts);
+$("productSearch").addEventListener("input",()=>loadProducts(true));
+$("productPrevBtn").addEventListener("click",()=>loadProducts(false,-1));
+$("productNextBtn").addEventListener("click",()=>loadProducts(false,1));
 
 const orderStatusLabels={pending:"নতুন অর্ডার",confirmed:"নিশ্চিত",processing:"প্রসেসিং",shipped:"ডেলিভারি পথে",delivered:"ডেলিভারি সম্পন্ন",cancelled:"বাতিল"};
 async function loadOrders(){
@@ -333,6 +335,7 @@ name,price,category:$("category").value,
 emoji:$("emoji").value.trim()||"🛍️",
 image
 });
+adminProductCount=null;
 $("name").value="";
 $("price").value="";
 $("photo").value="";
@@ -454,14 +457,27 @@ async function loadBanners(){
  }
 }
 
-async function loadProducts(){
-$("list").innerText="লোড হচ্ছে...";
-try{
-const snap=await getDocs(collection(db,"products"));
-$("productCount").textContent=snap.size;
-$("list").innerHTML="";
-const term=$("productSearch").value.trim().toLowerCase();
-snap.forEach(d=>{
+const ADMIN_PRODUCT_PAGE_SIZE=30;
+let adminProductPage=0;
+let adminProductCursors=[null];
+let adminProductHasNext=false;
+let adminProductCount=null;
+async function loadProducts(reset=true,direction=0){
+ if(reset){adminProductPage=0;adminProductCursors=[null];}
+ const targetPage=Math.max(0,adminProductPage+direction);
+ $("list").innerText="লোড হচ্ছে...";$("productPrevBtn").disabled=true;$("productNextBtn").disabled=true;
+ try{
+  if(adminProductCount===null){const countSnap=await getCountFromServer(collection(db,"products"));adminProductCount=countSnap.data().count;$("productCount").textContent=adminProductCount.toLocaleString("en-US");}
+  const cursor=adminProductCursors[targetPage]||null;
+  const constraints=[orderBy(documentId()),limit(ADMIN_PRODUCT_PAGE_SIZE)];
+  if(cursor)constraints.splice(1,0,startAfter(cursor));
+  const snap=await getDocs(query(collection(db,"products"),...constraints));
+  adminProductPage=targetPage;
+  if(!snap.empty)adminProductCursors[targetPage+1]=snap.docs[snap.docs.length-1];
+  adminProductHasNext=snap.size===ADMIN_PRODUCT_PAGE_SIZE;
+  $("list").innerHTML="";
+  const term=$("productSearch").value.trim().toLowerCase();
+  snap.forEach(d=>{
 const p=d.data();
 if(term&&!String(p.name||"").toLowerCase().includes(term))return;
 const div=document.createElement("div");
@@ -496,16 +512,17 @@ del.className="delete";
 del.onclick=async()=>{
 if(confirm("পণ্যটি মুছে ফেলবেন?")){
 await deleteDoc(doc(db,"products",d.id));
+adminProductCount=null;
 loadProducts();
 }
 };
 div.append(title,edit,del);
 $("list").append(div);
 });
-if(!$("list").children.length)$("list").innerText=snap.empty?"এখনো কোনো পণ্য নেই":"এই নামে কোনো পণ্য পাওয়া যায়নি";
-}catch(e){
-$("list").innerText="পণ্য লোড হয়নি: "+e.message;
-}
+if(!$("list").children.length)$("list").innerText=snap.empty?"এখনো কোনো পণ্য নেই":"এই পৃষ্ঠায় এই নামে কোনো পণ্য পাওয়া যায়নি";
+  $("productPageInfo").textContent="পৃষ্ঠা "+(adminProductPage+1)+" · প্রতি পৃষ্ঠায় সর্বোচ্চ "+ADMIN_PRODUCT_PAGE_SIZE+"টি পণ্য · মোট "+(adminProductCount||0).toLocaleString("en-US")+"টি";
+  $("productPrevBtn").disabled=adminProductPage===0;$("productNextBtn").disabled=!adminProductHasNext;
+ }catch(e){$("list").innerText="পণ্য লোড হয়নি: "+e.message;$("productPageInfo").textContent="পণ্য তালিকা লোড করতে সমস্যা হয়েছে।";}
 }
 </script>
 </body>
