@@ -81,6 +81,20 @@ hr{border:0;border-top:1px solid var(--line);margin:20px 0}
 .tool-summary .section-note{font-size:11px;margin-top:3px;font-weight:400}
 .panel-section{padding:12px;margin-bottom:11px;border-radius:16px}
 @media(max-width:640px){.tool-fold>summary{padding:11px 12px;min-height:58px}.tool-summary .section-note{font-size:10px}.panel-section{padding:10px}}
+
+/* Landscape product rows in admin inventory */
+#list{display:flex;flex-direction:column;gap:10px}
+#list .product-card{display:flex;flex-direction:row;align-items:center;gap:12px;padding:11px 13px;margin:0;min-width:0;background:#fff;border:1px solid #e2eaf5;border-radius:14px}
+#list .product-card img{width:76px;height:76px;flex:0 0 76px;object-fit:cover;border-radius:11px;background:#f1f5f9}
+#list .product-card b{flex:1;min-width:0;font-size:14px;line-height:1.45;overflow-wrap:anywhere}
+#list .product-card button{width:auto;flex:0 0 auto;padding:9px 11px;margin:0;font-size:12px;border-radius:9px;box-shadow:none}
+#list .product-card .delete{background:#fff0f1;color:#c62838;border:1px solid #ffd5d9}
+@media(max-width:520px){
+ #list .product-card{gap:8px;padding:9px}
+ #list .product-card img{width:58px;height:58px;flex-basis:58px}
+ #list .product-card b{font-size:12px}
+ #list .product-card button{padding:8px 9px;font-size:11px}
+}
 </style>
 </head>
 <body>
@@ -451,7 +465,7 @@ snap.forEach(d=>{
 const p=d.data();
 if(term&&!String(p.name||"").toLowerCase().includes(term))return;
 const div=document.createElement("div");
-div.className="item";
+div.className="item product-card";
 if(p.image){
 const img=document.createElement("img");
 img.src=p.image;
