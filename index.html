@@ -160,8 +160,8 @@ const db=getFirestore(app);
 let whatsappNumber="8801705511676";
 onSnapshot(doc(db,"settings","contact"),snapshot=>{
  const saved= snapshot.exists() ? String(snapshot.data().whatsappNumber||"") : "";
- const digits=saved.replace(/\\D/g,"");
- if(/^01[3-9]\\d{8}$/.test(digits)) whatsappNumber="88"+digits;
+ const digits=saved.replace(/\D/g,"");
+ if(/^01[3-9]\d{8}$/.test(digits)) whatsappNumber="88"+digits;
 });
 const products=[];
 const cart={};
