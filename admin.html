@@ -163,8 +163,8 @@ async function loadWhatsappSetting(){
  }
 }
 $("saveWhatsappBtn").onclick=async()=>{
- const number=$("whatsappNumber").value.trim().replace(/[\\s()+-]/g,"");
- if(!/^01[3-9]\\d{8}$/.test(number)){
+ const number=$("whatsappNumber").value.trim().replace(/[\s()+-]/g,"");
+ if(!/^01[3-9]\d{8}$/.test(number)){
   $("whatsappStatus").innerText="সঠিক ১১ সংখ্যার বাংলাদেশি মোবাইল নম্বর দিন";
   return;
  }
