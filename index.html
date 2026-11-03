@@ -126,7 +126,8 @@ nav a{font-size:13px;padding:9px 11px}
  <div class="cart">
   <div id="cartItems"><p class="empty">আপনার কার্ট এখন খালি।</p></div>
   <div class="total" id="total">মোট: ৳০</div>
-  <button class="order" id="orderBtn">WhatsApp-এ অর্ডার করুন</button>
+  <input id="customerName" maxlength="80" placeholder="আপনার নাম"><input id="customerPhone" type="tel" inputmode="numeric" maxlength="11" placeholder="মোবাইল নম্বর (01XXXXXXXXX)"><textarea id="customerAddress" maxlength="300" rows="3" placeholder="সম্পূর্ণ ডেলিভারি ঠিকানা"></textarea><p id="orderStatus"></p>
+  <button class="order" id="orderBtn">অর্ডার নিশ্চিত করুন ও WhatsApp পাঠান</button>
  </div>
 </section>
 
@@ -144,7 +145,7 @@ nav a{font-size:13px;padding:9px 11px}
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import {getFirestore,collection,onSnapshot,doc} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import {getFirestore,collection,onSnapshot,doc,addDoc} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const firebaseConfig={
  apiKey:"AIzaSyBL_17lHmW4pD4qpfROgjh5zz0ELHqPSIw",
@@ -303,28 +304,17 @@ document.querySelector(".categories").addEventListener("click",e=>{
  showProducts();
 });
 
-$("orderBtn").addEventListener("click",()=>{
- const items=Object.entries(cart).filter(([id,item])=>
-  item.qty>0&&products.some(p=>p.id===id)
- );
- if(!items.length){
-  alert("আগে কার্টে পণ্য যোগ করুন।");
-  return;
- }
-
- let lines=["আসসালামু আলাইকুম, আমি Easy Buy BD থেকে অর্ডার করতে চাই:"];
- let total=0;
-
- items.forEach(([id,item])=>{
-  const p=products.find(x=>x.id===id);
-  const subtotal=Number(p.price||0)*item.qty;
-  total+=subtotal;
-  lines.push(`${p.name} × ${item.qty} = ৳${money(subtotal)}`);
- });
-
- lines.push("",`মোট: ৳${money(total)}`);
- const url="https://wa.me/"+whatsappNumber+"?text="+encodeURIComponent(lines.join("\n"));
- window.open(url,"_blank");
+$("orderBtn").addEventListener("click",async()=>{
+ const items=Object.entries(cart).filter(([id,it])=>it.qty>0&&products.some(p=>p.id===id));
+ if(!items.length){alert("আগে কার্টে পণ্য যোগ করুন।");return;}
+ const customerName=$("customerName").value.trim(),phone=$("customerPhone").value.trim().replace(/[\\s()+-]/g,""),address=$("customerAddress").value.trim();
+ if(!customerName||!/^01[3-9]\\d{8}$/.test(phone)||!address){$("orderStatus").innerText="নাম, সঠিক মোবাইল নম্বর ও ঠিকানা পূরণ করুন।";return;}
+ let total=0;const orderItems=[],lines=["আসসালামু আলাইকুম, আমি Easy Buy BD থেকে অর্ডার করতে চাই:","নাম: "+customerName,"ফোন: "+phone,"ঠিকানা: "+address,""];
+ items.forEach(([id,it])=>{const p=products.find(x=>x.id===id),subtotal=Number(p.price||0)*it.qty;total+=subtotal;orderItems.push({productId:id,name:String(p.name||""),price:Number(p.price||0),qty:Number(it.qty),subtotal});lines.push(p.name+" × "+it.qty+" = ৳"+money(subtotal));});
+ lines.push("","মোট: ৳"+money(total));$("orderBtn").disabled=true;$("orderStatus").innerText="অর্ডার সংরক্ষণ হচ্ছে...";
+ try{const saved=await addDoc(collection(db,"orders"),{customerName,phone,address,items:orderItems,total,status:"pending",createdAt:Date.now()});lines.push("অর্ডার আইডি: "+saved.id);window.open("https://wa.me/"+whatsappNumber+"?text="+encodeURIComponent(lines.join("\\n")),"_blank");$("orderStatus").innerText="অর্ডার সংরক্ষিত হয়েছে। WhatsApp-এ বার্তাটি পাঠিয়ে অর্ডার সম্পন্ন করুন।";}
+ catch(e){$("orderStatus").innerText="অর্ডার সংরক্ষণ হয়নি: "+e.message+"। Firestore Rules-এ orders create অনুমতি লাগবে।";}
+ finally{$("orderBtn").disabled=false;}
 });
 
 onSnapshot(collection(db,"products"),snapshot=>{
