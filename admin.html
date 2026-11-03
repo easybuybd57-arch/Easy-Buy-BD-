@@ -109,7 +109,7 @@ hr{border:0;border-top:1px solid var(--line);margin:20px 0}
 </section>
 <section id="ordersSection" class="panel-section">
  <details class="tool-fold"><summary class="tool-summary"><div class="section-icon">📦</div><div><h3>অর্ডার ম্যানেজমেন্ট</h3><p class="section-note">গ্রাহকের অর্ডার দেখুন এবং ডেলিভারির ধাপ আপডেট করুন।</p></div></summary>
- <button id="refreshOrdersBtn" type="button">↻ অর্ডার Refresh করুন</button><p id="ordersStatus" role="status"></p><div id="ordersList">অর্ডার লোড হচ্ছে...</div>
+ <div class="form-grid"><div><label for="orderSearch">অর্ডার খুঁজুন</label><input id="orderSearch" placeholder="নাম / ফোন / অর্ডার ID"></div><div><label for="orderFilter">স্ট্যাটাস অনুযায়ী</label><select id="orderFilter"><option value="all">সব অর্ডার</option><option value="pending">নতুন অর্ডার</option><option value="confirmed">নিশ্চিত</option><option value="processing">প্রসেসিং</option><option value="shipped">ডেলিভারি পথে</option><option value="delivered">ডেলিভারি সম্পন্ন</option><option value="cancelled">বাতিল</option></select></div></div><button id="refreshOrdersBtn" type="button">↻ অর্ডার Refresh করুন</button><p id="ordersStatus" role="status"></p><div id="ordersList">অর্ডার লোড হচ্ছে...</div>
 </details></section>
 <section id="contactSection" class="panel-section">
  <details class="tool-fold"><summary class="tool-summary"><div class="section-icon">📞</div><div><h3>WhatsApp নম্বর সেটিংস</h3><p class="section-note">অর্ডারের WhatsApp নম্বর পরিবর্তন করুন।</p></div></summary>
@@ -134,7 +134,7 @@ hr{border:0;border-top:1px solid var(--line);margin:20px 0}
 </details></section>
 <section id="productsSection" class="panel-section">
  <div class="section-heading"><div class="section-icon">🛒</div><div><h3>আপনার পণ্যসমূহ</h3><p class="section-note">প্রকাশিত পণ্য দেখুন এবং প্রয়োজন হলে মুছুন।</p></div></div>
- <div id="list">লোড হচ্ছে...</div>
+ <label for="productSearch">পণ্য খুঁজুন</label><input id="productSearch" type="search" placeholder="পণ্যের নাম লিখুন..."><div id="list">লোড হচ্ছে...</div>
 </section>
 <button id="logoutBtn" class="logout-btn">Logout / নিরাপদে বের হন</button>
 </div>
@@ -167,6 +167,12 @@ const file=$("photo").files[0];
 if(!file)return;
 if(!file.type.startsWith("image/")){
 $("status").innerText="সঠিক ছবি নির্বাচন করুন";
+$("photo").value="";
+return;
+}
+if(file.size>8*1024*1024){
+$("status").innerText="ছবি ৮ MB-এর কম নির্বাচন করুন";
+$("photo").value="";
 return;
 }
 const reader=new FileReader();
@@ -225,6 +231,9 @@ if(user)signOut(auth);
 
 $("logoutBtn").onclick=()=>signOut(auth);
 $("refreshOrdersBtn").onclick=loadOrders;
+$("orderSearch").addEventListener("input",loadOrders);
+$("orderFilter").addEventListener("change",loadOrders);
+$("productSearch").addEventListener("input",loadProducts);
 
 const orderStatusLabels={pending:"নতুন অর্ডার",confirmed:"নিশ্চিত",processing:"প্রসেসিং",shipped:"ডেলিভারি পথে",delivered:"ডেলিভারি সম্পন্ন",cancelled:"বাতিল"};
 async function loadOrders(){
@@ -233,8 +242,16 @@ async function loadOrders(){
   const snap=await getDocs(query(collection(db,"orders"),orderBy("createdAt","desc")));
   $("orderCount").textContent=snap.size;
   $("ordersList").innerHTML="";
+  const term=$("orderSearch").value.trim().toLowerCase();
+  const wanted=$("orderFilter").value;
+  const visible=[];
   snap.forEach(d=>{
-   const o=d.data(),card=document.createElement("div");card.className="item";
+   const o=d.data();
+   const searchable=[d.id,o.customerName,o.phone,o.address].join(" ").toLowerCase();
+   if((wanted==="all"||(o.status||"pending")===wanted)&&(!term||searchable.includes(term)))visible.push({d,o});
+  });
+  visible.forEach(({d,o})=>{
+   const card=document.createElement("div");card.className="item";
    const title=document.createElement("b");title.textContent="অর্ডার #"+d.id.slice(-7);
    const info=document.createElement("p");info.style.whiteSpace="pre-line";
    info.textContent="নাম: "+(o.customerName||"—")+"\nফোন: "+(o.phone||"—")+"\nঠিকানা: "+(o.address||"—")+"\nপণ্য: "+(o.items||[]).map(x=>x.name+" × "+x.qty+" — ৳"+x.subtotal).join("\n")+"\nমোট: ৳"+o.total;
@@ -243,10 +260,11 @@ async function loadOrders(){
    select.value=o.status||"pending";
    const save=document.createElement("button");save.textContent="স্ট্যাটাস Save করুন";
    save.onclick=async()=>{save.disabled=true;try{await updateDoc(doc(db,"orders",d.id),{status:select.value,updatedAt:Date.now()});$("ordersStatus").innerText="স্ট্যাটাস আপডেট হয়েছে";}catch(e){$("ordersStatus").innerText="আপডেট হয়নি: "+e.message;}save.disabled=false;};
+   const wa=document.createElement("a");wa.href="https://wa.me/88"+String(o.phone||"").replace(/\\D/g,"")+"?text="+encodeURIComponent("আসসালামু আলাইকুম "+(o.customerName||"")+", আপনার Easy Buy BD অর্ডারের আপডেট: "+(orderStatusLabels[select.value]||select.value));wa.target="_blank";wa.rel="noopener";wa.textContent="গ্রাহককে WhatsApp করুন";wa.style.cssText="display:block;margin:10px 0;color:#087b45;font-weight:700;text-decoration:none";
    const date=document.createElement("small");date.textContent=o.createdAt?new Date(o.createdAt).toLocaleString("bn-BD"):"";
-   card.append(title,info,select,save,date);$("ordersList").append(card);
+   card.append(title,info,select,save,wa,date);$("ordersList").append(card);
   });
-  if(snap.empty)$("ordersList").innerText="এখনো কোনো অর্ডার নেই।";
+  if(!visible.length)$("ordersList").innerText=snap.empty?"এখনো কোনো অর্ডার নেই।":"এই ফিল্টারে কোনো অর্ডার পাওয়া যায়নি।";
  }catch(e){$("ordersList").innerText="অর্ডার লোড হয়নি: "+e.message+" (Firestore Rules পরীক্ষা করুন)";}
 }
 
@@ -320,6 +338,12 @@ $("bannerPhoto").onchange=()=>{
  if(!file)return;
  if(!file.type.startsWith("image/")){
   $("bannerStatus").innerText="সঠিক ছবি নির্বাচন করুন";
+  $("bannerPhoto").value="";
+  return;
+ }
+ if(file.size>8*1024*1024){
+  $("bannerStatus").innerText="ব্যানার ছবি ৮ MB-এর কম নির্বাচন করুন";
+  $("bannerPhoto").value="";
   return;
  }
  const reader=new FileReader();
@@ -422,8 +446,10 @@ try{
 const snap=await getDocs(collection(db,"products"));
 $("productCount").textContent=snap.size;
 $("list").innerHTML="";
+const term=$("productSearch").value.trim().toLowerCase();
 snap.forEach(d=>{
 const p=d.data();
+if(term&&!String(p.name||"").toLowerCase().includes(term))return;
 const div=document.createElement("div");
 div.className="item";
 if(p.image){
@@ -433,6 +459,23 @@ div.append(img);
 }
 const title=document.createElement("b");
 title.textContent=p.name+" — ৳"+p.price;
+const edit=document.createElement("button");
+edit.textContent="পণ্য Edit করুন";
+edit.onclick=async()=>{
+ const name=prompt("পণ্যের নতুন নাম:",p.name||"");
+ if(name===null)return;
+ const priceText=prompt("পণ্যের নতুন দাম:",String(p.price||""));
+ if(priceText===null)return;
+ const price=Number(priceText);
+ if(!name.trim()||!Number.isFinite(price)||price<=0){alert("সঠিক নাম ও দাম দিন");return;}
+ const category=prompt("ক্যাটাগরি লিখুন (ইলেকট্রনিক্স / ফ্যাশন / ঘর / অন্যান্য):",p.category||"ইলেকট্রনিক্স");
+ if(category===null)return;
+ try{
+  await updateDoc(doc(db,"products",d.id),{name:name.trim(),price,category});
+  $("status").innerText="পণ্যের তথ্য আপডেট হয়েছে";
+  loadProducts();
+ }catch(e){$("status").innerText="Edit করা যায়নি: "+e.message;}
+};
 const del=document.createElement("button");
 del.textContent="পণ্য মুছুন";
 del.className="delete";
@@ -442,10 +485,10 @@ await deleteDoc(doc(db,"products",d.id));
 loadProducts();
 }
 };
-div.append(title,del);
+div.append(title,edit,del);
 $("list").append(div);
 });
-if(snap.empty)$("list").innerText="এখনো কোনো পণ্য নেই";
+if(!$("list").children.length)$("list").innerText=snap.empty?"এখনো কোনো পণ্য নেই":"এই নামে কোনো পণ্য পাওয়া যায়নি";
 }catch(e){
 $("list").innerText="পণ্য লোড হয়নি: "+e.message;
 }
