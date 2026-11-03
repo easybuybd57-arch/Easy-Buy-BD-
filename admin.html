@@ -29,6 +29,13 @@ button{background:#087b45;color:white;border:0;font-weight:bold}
 </div>
 
 <div id="panel" class="hidden">
+<h3>📞 WhatsApp নম্বর সেটিংস</h3>
+<div class="item">
+ <label for="whatsappNumber">অর্ডার নেওয়ার WhatsApp নম্বর</label>
+ <input id="whatsappNumber" type="tel" inputmode="numeric" placeholder="01705511676" value="01705511676">
+ <button id="saveWhatsappBtn" type="button">WhatsApp নম্বর Save করুন</button>
+ <p id="whatsappStatus" role="status"></p>
+</div>
 <h3>নতুন পণ্য যোগ করুন</h3>
 <input id="name" placeholder="পণ্যের নাম">
 <input id="price" type="number" placeholder="পণ্যের দাম">
@@ -65,7 +72,7 @@ button{background:#087b45;color:white;border:0;font-weight:bold}
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut,setPersistence,inMemoryPersistence} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import {getFirestore,collection,addDoc,getDocs,deleteDoc,doc} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import {getFirestore,collection,addDoc,getDocs,deleteDoc,doc,getDoc,setDoc} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const firebaseConfig={
 apiKey:"AIzaSyBL_17lHmW4pD4qpfROgjh5zz0ELHqPSIw",
@@ -135,6 +142,7 @@ $("login").classList.add("hidden");
 $("panel").classList.remove("hidden");
 loadProducts();
 loadBanners();
+loadWhatsappSetting();
 }else{
 $("panel").classList.add("hidden");
 $("login").classList.remove("hidden");
@@ -143,6 +151,34 @@ if(user)signOut(auth);
 });
 
 $("logoutBtn").onclick=()=>signOut(auth);
+
+async function loadWhatsappSetting(){
+ try{
+  const snap=await getDoc(doc(db,"settings","contact"));
+  if(snap.exists()&&snap.data().whatsappNumber){
+   $("whatsappNumber").value=snap.data().whatsappNumber;
+  }
+ }catch(e){
+  $("whatsappStatus").innerText="নম্বর লোড হয়নি: "+e.message;
+ }
+}
+$("saveWhatsappBtn").onclick=async()=>{
+ const number=$("whatsappNumber").value.trim().replace(/[\\s()+-]/g,"");
+ if(!/^01[3-9]\\d{8}$/.test(number)){
+  $("whatsappStatus").innerText="সঠিক ১১ সংখ্যার বাংলাদেশি মোবাইল নম্বর দিন";
+  return;
+ }
+ $("saveWhatsappBtn").disabled=true;
+ $("whatsappStatus").innerText="নম্বর Save হচ্ছে...";
+ try{
+  await setDoc(doc(db,"settings","contact"),{whatsappNumber:number,updatedAt:Date.now()},{merge:true});
+  $("whatsappStatus").innerText="নম্বর সফলভাবে Save হয়েছে। ওয়েবসাইটে স্বয়ংক্রিয়ভাবে আপডেট হবে।";
+ }catch(e){
+  $("whatsappStatus").innerText="Save হয়নি: "+e.message;
+ }
+ $("saveWhatsappBtn").disabled=false;
+};
+
 
 $("addBtn").onclick=async()=>{
 const name=$("name").value.trim();
