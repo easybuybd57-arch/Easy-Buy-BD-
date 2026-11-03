@@ -3,111 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Easy Buy BD - Online Shopping</title>
+<title>Easy Buy BD | Online Shopping</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f4f6f8;color:#222}
-header{background:#087b50;color:white;padding:18px;text-align:center}
-header h1{margin:0;font-size:28px}
-header p{margin:6px 0 0}
-nav{background:#075d3e;padding:12px;text-align:center}
-nav a{color:white;text-decoration:none;margin:0 10px;font-weight:bold}
-.hero{background:linear-gradient(120deg,#087b50,#18b77a);color:white;text-align:center;padding:35px 15px}
-.hero h2{font-size:27px;margin:0 0 10px}
-.search{display:block;width:90%;max-width:500px;margin:20px auto;padding:13px;border:0;border-radius:8px;font-size:16px}
-.container{padding:18px;max-width:1100px;margin:auto}
-h2.section{text-align:center;color:#087b50}
-.categories{display:flex;justify-content:center;flex-wrap:wrap;gap:10px}
-.categories button{border:0;background:#087b50;color:white;padding:10px 16px;border-radius:20px}
-.products{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.product{background:white;border-radius:12px;padding:12px;text-align:center;box-shadow:0 2px 8px #ddd}
-.product .emoji{font-size:55px;background:#eef8f2;padding:15px;border-radius:10px}
-.product h3{margin:10px 0 5px}
-.price{color:#087b50;font-weight:bold;font-size:18px}
-.product button{background:#087b50;color:white;border:0;padding:10px 14px;border-radius:7px;width:100%;margin-top:8px}
-.cart{background:white;padding:16px;border-radius:12px;margin-top:22px}
-.order-btn{background:#128c4a;color:white;border:0;padding:14px;width:100%;border-radius:8px;font-size:17px;font-weight:bold;margin-top:12px}
-footer{background:#075d3e;color:white;text-align:center;padding:22px;margin-top:25px}
-@media(min-width:650px){.products{grid-template-columns:repeat(4,1fr)}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f4f7fc;color:#17233b}
+header{background:#fff;padding:15px 5%;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;box-shadow:0 2px 12px #14264b12;position:sticky;top:0;z-index:5}
+.logo{font-size:25px;font-weight:900;color:#1261d6}.logo span{color:#17233b}
+nav a{color:#263650;text-decoration:none;margin:0 9px;font-weight:bold}
+.hero{margin:22px auto;width:90%;background:linear-gradient(120deg,#0756c9,#3189f5);color:white;padding:42px 7%;border-radius:20px;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:210px}
+.hero h1{font-size:clamp(27px,5vw,42px);margin-bottom:12px}.hero p{line-height:1.7}.hero a{display:inline-block;margin-top:17px;background:white;color:#0756c9;padding:12px 22px;border-radius:9px;text-decoration:none;font-weight:bold}
+.section{width:90%;margin:28px auto}.section h2{font-size:24px;margin-bottom:18px}
+.search{width:100%;padding:14px;border:1px solid #dbe4f2;border-radius:10px;font-size:16px;margin-bottom:17px;outline:none}
+.categories{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:22px}
+.categories button{border:0;background:#e5efff;color:#155bc1;padding:10px 17px;border-radius:22px;font-weight:bold;cursor:pointer}
+.categories button.active,.categories button:hover{background:#1261d6;color:white}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:17px}
+.card{background:white;border-radius:15px;overflow:hidden;box-shadow:0 4px 18px #193b7010;border:1px solid #edf1f7}
+.photo{height:145px;background:#eaf2ff;display:grid;place-items:center;font-size:65px}
+.info{padding:13px}.info h3{font-size:16px;margin-bottom:8px}.price{color:#1261d6;font-size:19px;font-weight:900;margin:8px 0}
+.add{width:100%;border:0;background:#1261d6;color:white;padding:11px;border-radius:8px;font-weight:bold;cursor:pointer}
+.add:hover{background:#084ba9}
+.cart{background:white;padding:20px;border-radius:15px;box-shadow:0 4px 18px #193b7010}
+.cart-item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #edf1f7}
+.cart-item button{border:0;background:#eaf1fc;color:#155bc1;padding:6px 10px;border-radius:6px;cursor:pointer}
+.total{font-size:20px;font-weight:bold;text-align:right;margin:18px 0}
+.order{width:100%;padding:14px;background:#16a34a;color:white;border:0;border-radius:9px;font-size:17px;font-weight:bold;cursor:pointer}
+.empty{text-align:center;color:#718096;padding:15px}
+footer{background:#102b50;color:white;text-align:center;padding:25px;margin-top:35px;line-height:1.8}
+@media(max-width:600px){header{padding:13px 5%}nav{width:100%;text-align:center}nav a{margin:0 6px;font-size:13px}.hero{padding:30px 7%;margin-top:15px}.section{width:92%}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.photo{height:115px;font-size:52px}}
 </style>
 </head>
 <body>
 <header>
-<h1>Easy Buy BD</h1>
-<p>আপনার পছন্দের সব পণ্য এক জায়গায়!</p>
+ <div class="logo">Easy Buy <span>BD</span></div>
+ <nav><a href="#home">হোম</a><a href="#products">পণ্য</a><a href="#cart">কার্ট 🛒</a></nav>
 </header>
-<nav>
-<a href="#home">হোম</a>
-<a href="#products">পণ্য</a>
-<a href="#cart">কার্ট</a>
-<a href="#contact">যোগাযোগ</a>
-</nav>
 <section class="hero" id="home">
-<h2>Welcome to Easy Buy BD</h2>
-<p>সহজে কিনুন, নিশ্চিন্তে থাকুন।</p>
+ <div><h1>আপনার পছন্দের কেনাকাটা<br>এখন আরও সহজ!</h1><p>সেরা পণ্য, সেরা দাম — ঘরে বসেই অর্ডার করুন Easy Buy BD থেকে।</p><a href="#products">এখনই কেনাকাটা করুন →</a></div>
+ <div style="font-size:75px">🛍️</div>
 </section>
-<input class="search" id="search" placeholder="আপনার পছন্দের পণ্য খুঁজুন...">
-<div class="container">
-<h2 class="section">পণ্যের ক্যাটাগরি</h2>
-<div class="categories">
-<button onclick="filterProducts('সব')">সব</button>
-<button onclick="filterProducts('ইলেকট্রনিক্স')">ইলেকট্রনিক্স</button>
-<button onclick="filterProducts('ফ্যাশন')">ফ্যাশন</button>
-<button onclick="filterProducts('ঘর')">ঘরের পণ্য</button>
-<button onclick="filterProducts('অন্যান্য')">অন্যান্য</button>
-</div>
-<h2 class="section" id="products">আমাদের পণ্য</h2>
-<div class="products" id="productList"></div>
-<div class="cart" id="cart">
-<h2>🛒 আপনার শপিং কার্ট</h2>
-<div id="cartItems">এখনো কোনো পণ্য যোগ করা হয়নি।</div>
-<h3 id="total">মোট: ৳০</h3>
-<button class="order-btn" onclick="orderWhatsApp()">WhatsApp-এ অর্ডার করুন</button>
-</div>
-</div>
-<footer id="contact">
-<h3>Easy Buy BD</h3>
-<p>WhatsApp: +8801705512676</p>
-<p>© 2026 Easy Buy BD. All Rights Reserved.</p>
-</footer>
+<section class="section" id="products">
+ <h2>আমাদের পণ্যসমূহ</h2>
+ <input class="search" id="search" placeholder="🔍 পণ্যের নাম লিখে খুঁজুন..." oninput="showProducts()">
+ <div class="categories">
+  <button class="active" onclick="setCategory('all',this)">সব পণ্য</button>
+  <button onclick="setCategory('electronics',this)">ইলেকট্রনিক্স</button>
+  <button onclick="setCategory('fashion',this)">ফ্যাশন</button>
+  <button onclick="setCategory('home',this)">ঘর ও রান্না</button>
+  <button onclick="setCategory('others',this)">অন্যান্য</button>
+ </div>
+ <div class="products" id="productsList"></div>
+</section>
+<section class="section" id="cart">
+ <h2>🛒 আপনার শপিং কার্ট</h2>
+ <div class="cart"><div id="cartItems"><p class="empty">আপনার কার্ট এখন খালি।</p></div><div class="total" id="total">মোট: ৳০</div><button class="order" onclick="orderWhatsApp()">WhatsApp-এ অর্ডার করুন</button></div>
+</section>
+<footer> <b>Easy Buy BD</b><br>আপনার বিশ্বস্ত অনলাইন শপিং ঠিকানা<br>© 2026 Easy Buy BD. All rights reserved.</footer>
 <script>
 const products=[
-{name:"স্মার্টফোন",price:12000,emoji:"📱",category:"ইলেকট্রনিক্স"},
-{name:"হেডফোন",price:850,emoji:"🎧",category:"ইলেকট্রনিক্স"},
-{name:"টি-শার্ট",price:550,emoji:"👕",category:"ফ্যাশন"},
-{name:"জুতা",price:1200,emoji:"👟",category:"ফ্যাশন"},
-{name:"ঘড়ি",price:950,emoji:"⌚",category:"ফ্যাশন"},
-{name:"ব্যাগ",price:700,emoji:"🎒",category:"ফ্যাশন"},
-{name:"ল্যাম্প",price:450,emoji:"💡",category:"ঘর"},
-{name:"কাপ",price:180,emoji:"☕",category:"ঘর"}
+{id:1,name:'স্মার্টফোন',price:12000,cat:'electronics',emoji:'📱'},
+{id:2,name:'হেডফোন',price:850,cat:'electronics',emoji:'🎧'},
+{id:3,name:'টি-শার্ট',price:550,cat:'fashion',emoji:'👕'},
+{id:4,name:'জুতা',price:1200,cat:'fashion',emoji:'👟'},
+{id:5,name:'ঘড়ি',price:950,cat:'fashion',emoji:'⌚'},
+{id:6,name:'ব্যাগ',price:700,cat:'fashion',emoji:'🎒'},
+{id:7,name:'ল্যাম্প',price:450,cat:'home',emoji:'💡'},
+{id:8,name:'কাপ',price:180,cat:'others',emoji:'☕'}
 ];
-let cart=[];
-function showProducts(list=products){
-document.getElementById("productList").innerHTML=list.map((p)=>{
-let i=products.indexOf(p);
-return `<div class="product"><div class="emoji">${p.emoji}</div><h3>${p.name}</h3><div class="price">৳${p.price}</div><button onclick="addCart(${i})">কার্টে যোগ করুন</button></div>`;
-}).join("");
+let category='all',cart=[];
+function setCategory(c,b){category=c;document.querySelectorAll('.categories button').forEach(x=>x.classList.remove('active'));b.classList.add('active');showProducts()}
+function showProducts(){
+let q=document.getElementById('search').value.toLowerCase();
+let list=products.filter(p=>(category==='all'||p.cat===category)&&p.name.toLowerCase().includes(q));
+document.getElementById('productsList').innerHTML=list.length?list.map(p=>`<div class="card"><div class="photo">${p.emoji}</div><div class="info"><h3>${p.name}</h3><div class="price">৳${p.price.toLocaleString('en-IN')}</div><button class="add" onclick="addCart(${p.id})">কার্টে যোগ করুন +</button></div></div>`).join(''):'<p>কোনো পণ্য পাওয়া যায়নি।</p>';
 }
-function filterProducts(category){
-showProducts(category==="সব"?products:products.filter(p=>p.category===category));
-}
-function addCart(i){cart.push(products[i]);showCart();}
+function addCart(id){let item=cart.find(x=>x.id===id);if(item)item.qty++;else cart.push({id,qty:1});showCart()}
+function changeQty(id,n){let item=cart.find(x=>x.id===id);if(!item)return;item.qty+=n;if(item.qty<=0)cart=cart.filter(x=>x.id!==id);showCart()}
 function showCart(){
-document.getElementById("cartItems").innerHTML=cart.length?cart.map(p=>`${p.emoji} ${p.name} — ৳${p.price}`).join("<br>"):"এখনো কোনো পণ্য যোগ করা হয়নি।";
-document.getElementById("total").innerText="মোট: ৳"+cart.reduce((s,p)=>s+p.price,0);
+let el=document.getElementById('cartItems');
+if(!cart.length)el.innerHTML='<p class="empty">আপনার কার্ট এখন খালি।</p>';
+else el.innerHTML=cart.map(x=>{let p=products.find(y=>y.id===x.id);return `<div class="cart-item"><div><b>${p.name}</b><br>৳${p.price.toLocaleString('en-IN')} × ${x.qty}</div><div><button onclick="changeQty(${x.id},-1)">−</button> ${x.qty} <button onclick="changeQty(${x.id},1)">+</button></div></div>`}).join('');
+let sum=cart.reduce((s,x)=>s+products.find(p=>p.id===x.id).price*x.qty,0);
+document.getElementById('total').textContent='মোট: ৳'+sum.toLocaleString('en-IN');
 }
 function orderWhatsApp(){
-if(cart.length===0){alert("আগে কার্টে পণ্য যোগ করুন");return;}
-let message="আমি Easy Buy BD থেকে অর্ডার করতে চাই:\n";
-cart.forEach(p=>message+=p.name+" - ৳"+p.price+"\n");
-message+="মোট: ৳"+cart.reduce((sum,p)=>sum+p.price,0);
-window.open("https://wa.me/8801705512676?text="+encodeURIComponent(message),"_blank");
+if(!cart.length){alert('আগে কার্টে পণ্য যোগ করুন।');return}
+let msg='আসসালামু আলাইকুম, আমি Easy Buy BD থেকে অর্ডার করতে চাই:%0A';
+cart.forEach(x=>{let p=products.find(y=>y.id===x.id);msg+=`%0A${p.name} × ${x.qty} = ৳${p.price*x.qty}`});
+let sum=cart.reduce((s,x)=>s+products.find(p=>p.id===x.id).price*x.qty,0);
+msg+=`%0A%0Aমোট: ৳${sum}`;
+window.open('https://wa.me/8801705512676?text='+msg,'_blank');
 }
-document.getElementById("search").addEventListener("input",e=>{
-let q=e.target.value.toLowerCase();
-showProducts(products.filter(p=>p.name.toLowerCase().includes(q)));
-});
-showProducts();
+showProducts();showCart();
 </script>
 </body>
 </html>
