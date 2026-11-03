@@ -5,16 +5,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Easy Buy BD Admin</title>
 <style>
-body{font-family:Arial,sans-serif;background:#f1f5f9;margin:0;padding:15px}
-.box{max-width:500px;margin:20px auto;background:white;padding:20px;border-radius:14px;box-shadow:0 3px 15px #ddd}
-h2{text-align:center;color:#087b45}
-input,select,button{width:100%;padding:13px;margin:7px 0;box-sizing:border-box;border:1px solid #ccc;border-radius:8px;font-size:16px}
-button{background:#087b45;color:white;border:0;font-weight:bold}
-.delete{background:#dc2626}
-.item{border:1px solid #ddd;padding:12px;margin:10px 0;border-radius:9px}
-.item img{width:75px;height:75px;object-fit:cover;border-radius:8px}
-.hidden{display:none}
-#preview{max-width:150px;max-height:150px;display:none;margin:10px auto}
+:root{--navy:#10213d;--blue:#1769e0;--blue2:#0d4fb3;--ink:#17243a;--muted:#64748b;--line:#e5eaf2;--bg:#f3f6fb;--white:#fff;--green:#087b45;--red:#dc3545;--shadow:0 12px 32px rgba(22,43,77,.08)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{font-family:Arial,"Noto Sans Bengali",sans-serif;background:var(--bg);margin:0;padding:22px;color:var(--ink)}
+.box{max-width:1100px;margin:18px auto;background:transparent;padding:0;border-radius:0;box-shadow:none}
+h2{margin:0;color:#fff;font-size:25px}
+h3{font-size:19px;margin:0 0 18px;color:var(--navy)}
+p{line-height:1.6}
+#login{max-width:440px;margin:8vh auto;background:#fff;padding:30px;border-radius:22px;box-shadow:var(--shadow)}
+#login h3{margin:8px 0 20px}
+#message{color:var(--red);overflow-wrap:anywhere}
+input,select,textarea{width:100%;padding:14px 15px;margin:7px 0 13px;box-sizing:border-box;border:1px solid #d8e0eb;border-radius:12px;font-size:16px;background:#fff;color:var(--ink);outline:none;transition:.2s}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,105,224,.12)}
+label{display:block;font-weight:700;color:#334155;margin:8px 0}
+button{width:100%;padding:14px 16px;margin:7px 0;border:0;border-radius:12px;font-size:15px;font-weight:700;background:linear-gradient(135deg,var(--blue),var(--blue2));color:white;cursor:pointer;box-shadow:0 5px 12px rgba(23,105,224,.15);transition:transform .15s,opacity .15s}
+button:active{transform:scale(.99)}button:disabled{opacity:.6;cursor:wait}
+.delete{background:#fff0f1;color:#c62838;border:1px solid #ffd5d9;box-shadow:none}
+.hidden{display:none!important}
+#preview{max-width:150px;max-height:150px;display:none;margin:10px auto;border-radius:12px}
+#bannerPreview{width:100%;max-height:220px;object-fit:cover;display:none;margin:10px 0;border-radius:14px}
+.dashboard-hero{background:linear-gradient(120deg,#10213d,#1769e0);color:#fff;padding:26px 28px;border-radius:22px;display:flex;align-items:center;justify-content:space-between;gap:18px;box-shadow:0 14px 32px rgba(16,55,111,.2)}
+.hero-kicker{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:#c9ddff;font-weight:700;margin:0 0 8px}
+.hero-sub{margin:8px 0 0;color:#dce9ff;font-size:14px}
+.hero-mark{width:62px;height:62px;border-radius:18px;background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:32px;flex-shrink:0}
+.dash-nav{display:flex;gap:9px;overflow-x:auto;padding:14px 2px 18px;scrollbar-width:none}
+.dash-nav a{white-space:nowrap;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:999px;padding:10px 15px;color:#334155;font-size:13px;font-weight:700}
+.dash-nav a:first-child{background:#e8f1ff;color:var(--blue);border-color:#cfe0ff}
+.stats-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:2px 0 22px}
+.stat-card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:17px;box-shadow:var(--shadow)}
+.stat-label{font-size:13px;color:var(--muted);margin:0 0 8px}
+.stat-value{font-size:27px;font-weight:800;color:var(--navy);margin:0}
+.stat-icon{font-size:21px;margin-bottom:8px}
+.panel-section{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;margin:0 0 18px;box-shadow:var(--shadow);scroll-margin-top:88px}
+.section-heading{display:flex;align-items:center;gap:11px;margin-bottom:16px}
+.section-icon{width:42px;height:42px;border-radius:13px;background:#eaf2ff;display:grid;place-items:center;font-size:21px;flex-shrink:0}
+.section-heading h3{margin:0}
+.section-note{color:var(--muted);font-size:13px;margin:5px 0 0}
+.item{border:1px solid var(--line);padding:16px;margin:12px 0;border-radius:15px;background:#fbfcff}
+.item img{width:75px;height:75px;object-fit:cover;border-radius:10px}
+#ordersList,#bannerList,#list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+#ordersList .item,#bannerList .item,#list .item{margin:0;min-width:0}
+#ordersList .item p{overflow-wrap:anywhere}
+#ordersList button{margin-top:8px}
+#ordersStatus,#whatsappStatus,#bannerStatus,#status{font-size:13px;color:var(--green);overflow-wrap:anywhere}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.form-grid .full{grid-column:1/-1}
+.file-field{background:#f8faff;padding:12px;border:1px dashed #cbd7e8;border-radius:13px}
+hr{border:0;border-top:1px solid var(--line);margin:20px 0}
+.logout-btn{background:#edf2f8;color:#334155;box-shadow:none}
+@media(max-width:640px){
+ body{padding:12px}.box{margin:6px auto}.dashboard-hero{padding:21px;border-radius:18px}.dashboard-hero h2{font-size:21px}.hero-mark{width:50px;height:50px;font-size:26px}
+ .stats-grid{gap:8px}.stat-card{padding:13px 11px}.stat-value{font-size:22px}.stat-label{font-size:11px}
+ .panel-section{padding:17px;border-radius:17px;margin-bottom:13px}.section-heading h3{font-size:17px}
+ .form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}
+ #login{padding:23px;margin:10vh auto}
+}
 </style>
 </head>
 <body>
@@ -29,43 +75,49 @@ button{background:#087b45;color:white;border:0;font-weight:bold}
 </div>
 
 <div id="panel" class="hidden">
-<h3>📦 অর্ডার ম্যানেজমেন্ট</h3><div class="item"><button id="refreshOrdersBtn" type="button">অর্ডার Refresh করুন</button><p id="ordersStatus"></p><div id="ordersList">অর্ডার লোড হচ্ছে...</div></div><h3>📞 WhatsApp নম্বর সেটিংস</h3>
-<div class="item">
- <label for="whatsappNumber">অর্ডার নেওয়ার WhatsApp নম্বর</label>
- <input id="whatsappNumber" type="tel" inputmode="numeric" placeholder="01705511676" value="01705511676">
- <button id="saveWhatsappBtn" type="button">WhatsApp নম্বর Save করুন</button>
- <p id="whatsappStatus" role="status"></p>
+<header class="dashboard-hero">
+ <div><p class="hero-kicker">Easy Buy BD · Control Center</p><h2>অ্যাডমিন ড্যাশবোর্ড</h2><p class="hero-sub">আপনার অনলাইন শপের সবকিছু এক জায়গা থেকে পরিচালনা করুন।</p></div>
+ <div class="hero-mark">🛍️</div>
+</header>
+<nav class="dash-nav" aria-label="Dashboard sections">
+ <a href="#overview">ওভারভিউ</a><a href="#ordersSection">অর্ডার</a><a href="#contactSection">WhatsApp</a><a href="#productSection">নতুন পণ্য</a><a href="#bannerSection">ব্যানার</a><a href="#productsSection">পণ্য তালিকা</a>
+</nav>
+<section id="overview" class="stats-grid">
+ <div class="stat-card"><div class="stat-icon">📦</div><p class="stat-label">মোট অর্ডার</p><p class="stat-value" id="orderCount">—</p></div>
+ <div class="stat-card"><div class="stat-icon">🛍️</div><p class="stat-label">মোট পণ্য</p><p class="stat-value" id="productCount">—</p></div>
+ <div class="stat-card"><div class="stat-icon">🖼️</div><p class="stat-label">হোম ব্যানার</p><p class="stat-value" id="bannerCount">—</p></div>
+</section>
+<section id="ordersSection" class="panel-section">
+ <div class="section-heading"><div class="section-icon">📦</div><div><h3>অর্ডার ম্যানেজমেন্ট</h3><p class="section-note">গ্রাহকের অর্ডার দেখুন এবং ডেলিভারির ধাপ আপডেট করুন।</p></div></div>
+ <button id="refreshOrdersBtn" type="button">↻ অর্ডার Refresh করুন</button><p id="ordersStatus" role="status"></p><div id="ordersList">অর্ডার লোড হচ্ছে...</div>
+</section>
+<section id="contactSection" class="panel-section">
+ <div class="section-heading"><div class="section-icon">📞</div><div><h3>WhatsApp নম্বর সেটিংস</h3><p class="section-note">অর্ডারের WhatsApp নম্বর পরিবর্তন করুন।</p></div></div>
+ <label for="whatsappNumber">অর্ডার নেওয়ার WhatsApp নম্বর</label><input id="whatsappNumber" type="tel" inputmode="numeric" placeholder="01705511676" value="01705511676">
+ <button id="saveWhatsappBtn" type="button">নম্বর Save করুন</button><p id="whatsappStatus" role="status"></p>
+</section>
+<section id="productSection" class="panel-section">
+ <div class="section-heading"><div class="section-icon">➕</div><div><h3>নতুন পণ্য যোগ করুন</h3><p class="section-note">পণ্যের তথ্য ও ছবি দিয়ে স্টোরে প্রকাশ করুন।</p></div></div>
+ <div class="form-grid">
+  <div><label for="name">পণ্যের নাম</label><input id="name" placeholder="যেমন: Bluetooth Headphone"></div>
+  <div><label for="price">পণ্যের দাম (৳)</label><input id="price" type="number" min="1" placeholder="পণ্যের দাম"></div>
+  <div><label for="category">ক্যাটাগরি</label><select id="category"><option>ইলেকট্রনিক্স</option><option>ফ্যাশন</option><option>ঘর</option><option>অন্যান্য</option></select></div>
+  <div><label for="emoji">পণ্যের ইমোজি</label><input id="emoji" placeholder="ইমোজি" value="🛍️"></div>
+  <div class="full"><label for="photo">পণ্যের ছবি</label><div class="file-field"><input id="photo" type="file" accept="image/*"><img id="preview" alt="ছবির প্রিভিউ"></div></div>
+  <div class="full"><button id="addBtn">＋ পণ্য যোগ করুন</button><p id="status" role="status"></p></div>
+ </div>
+</section>
+<section id="bannerSection" class="panel-section">
+ <div class="section-heading"><div class="section-icon">🖼️</div><div><h3>হোমপেজ ব্যানার</h3><p class="section-note">স্টোরের হোমপেজের জন্য নতুন ব্যানার যোগ ও পরিচালনা করুন।</p></div></div>
+ <label for="bannerPhoto">ব্যানার ছবি নির্বাচন করুন</label><div class="file-field"><input id="bannerPhoto" type="file" accept="image/*"><img id="bannerPreview" alt="ব্যানার প্রিভিউ"></div>
+ <button id="addBannerBtn">＋ ব্যানার যোগ করুন</button><p id="bannerStatus" role="status"></p><h3 style="margin-top:22px">আপনার ব্যানারসমূহ</h3><div id="bannerList">লোড হচ্ছে...</div>
+</section>
+<section id="productsSection" class="panel-section">
+ <div class="section-heading"><div class="section-icon">🛒</div><div><h3>আপনার পণ্যসমূহ</h3><p class="section-note">প্রকাশিত পণ্য দেখুন এবং প্রয়োজন হলে মুছুন।</p></div></div>
+ <div id="list">লোড হচ্ছে...</div>
+</section>
+<button id="logoutBtn" class="logout-btn">Logout / নিরাপদে বের হন</button>
 </div>
-<h3>নতুন পণ্য যোগ করুন</h3>
-<input id="name" placeholder="পণ্যের নাম">
-<input id="price" type="number" placeholder="পণ্যের দাম">
-<select id="category">
-<option>ইলেকট্রনিক্স</option>
-<option>ফ্যাশন</option>
-<option>ঘর</option>
-<option>অন্যান্য</option>
-</select>
-<input id="emoji" placeholder="ইমোজি" value="🛍️">
-<label>গ্যালারি থেকে পণ্যের ছবি নির্বাচন করুন</label>
-<input id="photo" type="file" accept="image/*">
-<img id="preview" alt="ছবির প্রিভিউ">
-<button id="addBtn">পণ্য যোগ করুন</button>
-
-<hr>
-<h3>🖼️ হোমপেজ ব্যানার পরিচালনা</h3>
-<label>গ্যালারি থেকে ব্যানার ছবি নির্বাচন করুন</label>
-<input id="bannerPhoto" type="file" accept="image/*">
-<img id="bannerPreview" alt="ব্যানার প্রিভিউ" style="width:100%;display:none;margin:10px 0;border-radius:8px">
-<button id="addBannerBtn">ব্যানার যোগ করুন</button>
-<p id="bannerStatus"></p>
-<h3>আপনার ব্যানারসমূহ</h3>
-<div id="bannerList">লোড হচ্ছে...</div>
-
-<button id="logoutBtn" style="background:#475569">Logout</button>
-<p id="status"></p>
-<hr>
-<h3>আপনার পণ্যসমূহ</h3>
-<div id="list">লোড হচ্ছে...</div>
 </div>
 </div>
 
@@ -159,6 +211,7 @@ async function loadOrders(){
  $("ordersList").innerText="অর্ডার লোড হচ্ছে...";
  try{
   const snap=await getDocs(query(collection(db,"orders"),orderBy("createdAt","desc")));
+  $("orderCount").textContent=snap.size;
   $("ordersList").innerHTML="";
   snap.forEach(d=>{
    const o=d.data(),card=document.createElement("div");card.className="item";
@@ -308,6 +361,7 @@ async function loadBanners(){
  $("bannerList").innerText="লোড হচ্ছে...";
  try{
   const snap=await getDocs(collection(db,"banners"));
+  $("bannerCount").textContent=snap.size;
   $("bannerList").innerHTML="";
   snap.forEach(d=>{
    const b=d.data();
@@ -346,6 +400,7 @@ async function loadProducts(){
 $("list").innerText="লোড হচ্ছে...";
 try{
 const snap=await getDocs(collection(db,"products"));
+$("productCount").textContent=snap.size;
 $("list").innerHTML="";
 snap.forEach(d=>{
 const p=d.data();
