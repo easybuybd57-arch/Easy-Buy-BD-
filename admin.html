@@ -29,7 +29,7 @@ button{background:#087b45;color:white;border:0;font-weight:bold}
 </div>
 
 <div id="panel" class="hidden">
-<h3>📞 WhatsApp নম্বর সেটিংস</h3>
+<h3>📦 অর্ডার ম্যানেজমেন্ট</h3><div class="item"><button id="refreshOrdersBtn" type="button">অর্ডার Refresh করুন</button><p id="ordersStatus"></p><div id="ordersList">অর্ডার লোড হচ্ছে...</div></div><h3>📞 WhatsApp নম্বর সেটিংস</h3>
 <div class="item">
  <label for="whatsappNumber">অর্ডার নেওয়ার WhatsApp নম্বর</label>
  <input id="whatsappNumber" type="tel" inputmode="numeric" placeholder="01705511676" value="01705511676">
@@ -72,7 +72,7 @@ button{background:#087b45;color:white;border:0;font-weight:bold}
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut,setPersistence,inMemoryPersistence} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import {getFirestore,collection,addDoc,getDocs,deleteDoc,doc,getDoc,setDoc} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import {getFirestore,collection,addDoc,getDocs,deleteDoc,doc,getDoc,setDoc,updateDoc,query,orderBy} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const firebaseConfig={
 apiKey:"AIzaSyBL_17lHmW4pD4qpfROgjh5zz0ELHqPSIw",
@@ -143,6 +143,7 @@ $("panel").classList.remove("hidden");
 loadProducts();
 loadBanners();
 loadWhatsappSetting();
+loadOrders();
 }else{
 $("panel").classList.add("hidden");
 $("login").classList.remove("hidden");
@@ -151,6 +152,30 @@ if(user)signOut(auth);
 });
 
 $("logoutBtn").onclick=()=>signOut(auth);
+$("refreshOrdersBtn").onclick=loadOrders;
+
+const orderStatusLabels={pending:"নতুন অর্ডার",confirmed:"নিশ্চিত",processing:"প্রসেসিং",shipped:"ডেলিভারি পথে",delivered:"ডেলিভারি সম্পন্ন",cancelled:"বাতিল"};
+async function loadOrders(){
+ $("ordersList").innerText="অর্ডার লোড হচ্ছে...";
+ try{
+  const snap=await getDocs(query(collection(db,"orders"),orderBy("createdAt","desc")));
+  $("ordersList").innerHTML="";
+  snap.forEach(d=>{
+   const o=d.data(),card=document.createElement("div");card.className="item";
+   const title=document.createElement("b");title.textContent="অর্ডার #"+d.id.slice(-7);
+   const info=document.createElement("p");info.style.whiteSpace="pre-line";
+   info.textContent="নাম: "+(o.customerName||"—")+"\nফোন: "+(o.phone||"—")+"\nঠিকানা: "+(o.address||"—")+"\nপণ্য: "+(o.items||[]).map(x=>x.name+" × "+x.qty+" — ৳"+x.subtotal).join("\n")+"\nমোট: ৳"+o.total;
+   const select=document.createElement("select");
+   Object.entries(orderStatusLabels).forEach(([v,l])=>{const op=document.createElement("option");op.value=v;op.textContent=l;select.append(op);});
+   select.value=o.status||"pending";
+   const save=document.createElement("button");save.textContent="স্ট্যাটাস Save করুন";
+   save.onclick=async()=>{save.disabled=true;try{await updateDoc(doc(db,"orders",d.id),{status:select.value,updatedAt:Date.now()});$("ordersStatus").innerText="স্ট্যাটাস আপডেট হয়েছে";}catch(e){$("ordersStatus").innerText="আপডেট হয়নি: "+e.message;}save.disabled=false;};
+   const date=document.createElement("small");date.textContent=o.createdAt?new Date(o.createdAt).toLocaleString("bn-BD"):"";
+   card.append(title,info,select,save,date);$("ordersList").append(card);
+  });
+  if(snap.empty)$("ordersList").innerText="এখনো কোনো অর্ডার নেই।";
+ }catch(e){$("ordersList").innerText="অর্ডার লোড হয়নি: "+e.message+" (Firestore Rules পরীক্ষা করুন)";}
+}
 
 async function loadWhatsappSetting(){
  try{
