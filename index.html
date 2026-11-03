@@ -307,8 +307,8 @@ document.querySelector(".categories").addEventListener("click",e=>{
 $("orderBtn").addEventListener("click",async()=>{
  const items=Object.entries(cart).filter(([id,it])=>it.qty>0&&products.some(p=>p.id===id));
  if(!items.length){alert("আগে কার্টে পণ্য যোগ করুন।");return;}
- const customerName=$("customerName").value.trim(),phone=$("customerPhone").value.trim().replace(/[\\s()+-]/g,""),address=$("customerAddress").value.trim();
- if(!customerName||!/^01[3-9]\\d{8}$/.test(phone)||!address){$("orderStatus").innerText="নাম, সঠিক মোবাইল নম্বর ও ঠিকানা পূরণ করুন।";return;}
+ const customerName=$("customerName").value.trim(),phone=$("customerPhone").value.trim().replace(/[\s()+-]/g,""),address=$("customerAddress").value.trim();
+ if(!customerName||!/^01[3-9]\d{8}$/.test(phone)||!address){$("orderStatus").innerText="নাম, সঠিক মোবাইল নম্বর ও ঠিকানা পূরণ করুন।";return;}
  let total=0;const orderItems=[],lines=["আসসালামু আলাইকুম, আমি Easy Buy BD থেকে অর্ডার করতে চাই:","নাম: "+customerName,"ফোন: "+phone,"ঠিকানা: "+address,""];
  items.forEach(([id,it])=>{const p=products.find(x=>x.id===id),subtotal=Number(p.price||0)*it.qty;total+=subtotal;orderItems.push({productId:id,name:String(p.name||""),price:Number(p.price||0),qty:Number(it.qty),subtotal});lines.push(p.name+" × "+it.qty+" = ৳"+money(subtotal));});
  lines.push("","মোট: ৳"+money(total));$("orderBtn").disabled=true;$("orderStatus").innerText="অর্ডার সংরক্ষণ হচ্ছে...";
