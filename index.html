@@ -8,19 +8,26 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f4f7fc;color:#17233b}
 header{background:#fff;padding:15px 5%;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;box-shadow:0 2px 12px #14264b12;position:sticky;top:0;z-index:5}
-.logo{font-size:25px;font-weight:900;color:#1261d6}.logo span{color:#17233b}
+.logo{font-size:25px;font-weight:900;color:#1261d6}
+.logo span{color:#17233b}
 nav a{color:#263650;text-decoration:none;margin:0 9px;font-weight:bold}
 .hero{margin:22px auto;width:90%;background:linear-gradient(120deg,#0756c9,#3189f5);color:white;padding:42px 7%;border-radius:20px;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:210px}
-.hero h1{font-size:clamp(27px,5vw,42px);margin-bottom:12px}.hero p{line-height:1.7}.hero a{display:inline-block;margin-top:17px;background:white;color:#0756c9;padding:12px 22px;border-radius:9px;text-decoration:none;font-weight:bold}
-.section{width:90%;margin:28px auto}.section h2{font-size:24px;margin-bottom:18px}
+.hero h1{font-size:clamp(27px,5vw,42px);margin-bottom:12px}
+.hero p{line-height:1.7}
+.hero a{display:inline-block;margin-top:17px;background:white;color:#0756c9;padding:12px 22px;border-radius:9px;text-decoration:none;font-weight:bold}
+.section{width:90%;margin:28px auto}
+.section h2{font-size:24px;margin-bottom:18px}
 .search{width:100%;padding:14px;border:1px solid #dbe4f2;border-radius:10px;font-size:16px;margin-bottom:17px;outline:none}
 .categories{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:22px}
 .categories button{border:0;background:#e5efff;color:#155bc1;padding:10px 17px;border-radius:22px;font-weight:bold;cursor:pointer}
 .categories button.active,.categories button:hover{background:#1261d6;color:white}
 .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:17px}
 .card{background:white;border-radius:15px;overflow:hidden;box-shadow:0 4px 18px #193b7010;border:1px solid #edf1f7}
-.photo{height:145px;background:#eaf2ff;display:grid;place-items:center;font-size:65px}
-.info{padding:13px}.info h3{font-size:16px;margin-bottom:8px}.price{color:#1261d6;font-size:19px;font-weight:900;margin:8px 0}
+.photo{height:145px;background:#eaf2ff;display:grid;place-items:center;font-size:65px;overflow:hidden}
+.photo img{width:100%;height:100%;object-fit:cover}
+.info{padding:13px}
+.info h3{font-size:16px;margin-bottom:8px}
+.price{color:#1261d6;font-size:19px;font-weight:900;margin:8px 0}
 .add{width:100%;border:0;background:#1261d6;color:white;padding:11px;border-radius:8px;font-weight:bold;cursor:pointer}
 .add:hover{background:#084ba9}
 .cart{background:white;padding:20px;border-radius:15px;box-shadow:0 4px 18px #193b7010}
@@ -30,71 +37,223 @@ nav a{color:#263650;text-decoration:none;margin:0 9px;font-weight:bold}
 .order{width:100%;padding:14px;background:#16a34a;color:white;border:0;border-radius:9px;font-size:17px;font-weight:bold;cursor:pointer}
 .empty{text-align:center;color:#718096;padding:15px}
 footer{background:#102b50;color:white;text-align:center;padding:25px;margin-top:35px;line-height:1.8}
-@media(max-width:600px){header{padding:13px 5%}nav{width:100%;text-align:center}nav a{margin:0 6px;font-size:13px}.hero{padding:30px 7%;margin-top:15px}.section{width:92%}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.photo{height:115px;font-size:52px}}
+@media(max-width:600px){
+header{padding:13px 5%}
+nav{width:100%;text-align:center}
+nav a{margin:0 6px;font-size:13px}
+.hero{padding:30px 7%;margin-top:15px}
+.section{width:92%}
+.products{grid-template-columns:repeat(2,minmax(0,1fr))}
+.photo{height:115px;font-size:52px}
+}
 </style>
 </head>
 <body>
 <header>
  <div class="logo">Easy Buy <span>BD</span></div>
- <nav><a href="#home">হোম</a><a href="#products">পণ্য</a><a href="#cart">কার্ট 🛒</a></nav>
+ <nav><a href="#home">হোম</a><a href="#products">পণ্য</a><a href="#cart">কার্ট 🛒</a><a href="admin.html">Admin</a></nav>
 </header>
+
 <section class="hero" id="home">
- <div><h1>আপনার পছন্দের কেনাকাটা<br>এখন আরও সহজ!</h1><p>সেরা পণ্য, সেরা দাম — ঘরে বসেই অর্ডার করুন Easy Buy BD থেকে।</p><a href="#products">এখনই কেনাকাটা করুন →</a></div>
+ <div>
+  <h1>আপনার পছন্দের কেনাকাটা<br>এখন আরও সহজ!</h1>
+  <p>সেরা পণ্য, সেরা দাম — ঘরে বসেই অর্ডার করুন Easy Buy BD থেকে।</p>
+  <a href="#products">এখনই কেনাকাটা করুন →</a>
+ </div>
  <div style="font-size:75px">🛍️</div>
 </section>
+
 <section class="section" id="products">
  <h2>আমাদের পণ্যসমূহ</h2>
- <input class="search" id="search" placeholder="🔍 পণ্যের নাম লিখে খুঁজুন..." oninput="showProducts()">
+ <input class="search" id="search" placeholder="🔍 পণ্যের নাম লিখে খুঁজুন...">
  <div class="categories">
-  <button class="active" onclick="setCategory('all',this)">সব পণ্য</button>
-  <button onclick="setCategory('electronics',this)">ইলেকট্রনিক্স</button>
-  <button onclick="setCategory('fashion',this)">ফ্যাশন</button>
-  <button onclick="setCategory('home',this)">ঘর ও রান্না</button>
-  <button onclick="setCategory('others',this)">অন্যান্য</button>
+  <button class="active" data-cat="all">সব পণ্য</button>
+  <button data-cat="electronics">ইলেকট্রনিক্স</button>
+  <button data-cat="fashion">ফ্যাশন</button>
+  <button data-cat="home">ঘর ও রান্না</button>
+  <button data-cat="others">অন্যান্য</button>
  </div>
- <div class="products" id="productsList"></div>
+ <div id="productsList" class="products"><p>পণ্য লোড হচ্ছে...</p></div>
 </section>
+
 <section class="section" id="cart">
  <h2>🛒 আপনার শপিং কার্ট</h2>
- <div class="cart"><div id="cartItems"><p class="empty">আপনার কার্ট এখন খালি।</p></div><div class="total" id="total">মোট: ৳০</div><button class="order" onclick="orderWhatsApp()">WhatsApp-এ অর্ডার করুন</button></div>
+ <div class="cart">
+  <div id="cartItems"><p class="empty">আপনার কার্ট এখন খালি।</p></div>
+  <div class="total" id="total">মোট: ৳০</div>
+  <button class="order" id="orderBtn">WhatsApp-এ অর্ডার করুন</button>
+ </div>
 </section>
-<footer> <b>Easy Buy BD</b><br>আপনার বিশ্বস্ত অনলাইন শপিং ঠিকানা<br>© 2026 Easy Buy BD. All rights reserved.</footer>
-<script>
-const products=[
-{id:1,name:'স্মার্টফোন',price:12000,cat:'electronics',emoji:'📱'},
-{id:2,name:'হেডফোন',price:850,cat:'electronics',emoji:'🎧'},
-{id:3,name:'টি-শার্ট',price:550,cat:'fashion',emoji:'👕'},
-{id:4,name:'জুতা',price:1200,cat:'fashion',emoji:'👟'},
-{id:5,name:'ঘড়ি',price:950,cat:'fashion',emoji:'⌚'},
-{id:6,name:'ব্যাগ',price:700,cat:'fashion',emoji:'🎒'},
-{id:7,name:'ল্যাম্প',price:450,cat:'home',emoji:'💡'},
-{id:8,name:'কাপ',price:180,cat:'others',emoji:'☕'}
-];
-let category='all',cart=[];
-function setCategory(c,b){category=c;document.querySelectorAll('.categories button').forEach(x=>x.classList.remove('active'));b.classList.add('active');showProducts()}
+
+<footer>
+ <b>Easy Buy BD</b><br>
+ আপনার বিশ্বস্ত অনলাইন শপিং ঠিকানা<br>
+ © 2026 Easy Buy BD. All rights reserved.
+</footer>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import {getFirestore,collection,onSnapshot} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+const firebaseConfig={
+ apiKey:"AIzaSyBL_17lHmW4pD4qpfROgjh5zz0ELHqPSIw",
+ authDomain:"easy-buy-bd-ef147.firebaseapp.com",
+ projectId:"easy-buy-bd-ef147",
+ storageBucket:"easy-buy-bd-ef147.firebasestorage.app",
+ messagingSenderId:"246521445162",
+ appId:"1:246521445162:web:d21e43015352ec008d7c53"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+const products=[];
+const cart={};
+let category="all";
+
+const $=id=>document.getElementById(id);
+const money=n=>Number(n||0).toLocaleString("en-IN");
+
+function categoryKey(value){
+ const map={
+  "ইলেকট্রনিক্স":"electronics",
+  "ফ্যাশন":"fashion",
+  "ঘর":"home",
+  "অন্যান্য":"others"
+ };
+ return map[value]||value||"others";
+}
+
+function safe(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
 function showProducts(){
-let q=document.getElementById('search').value.toLowerCase();
-let list=products.filter(p=>(category==='all'||p.cat===category)&&p.name.toLowerCase().includes(q));
-document.getElementById('productsList').innerHTML=list.length?list.map(p=>`<div class="card"><div class="photo">${p.emoji}</div><div class="info"><h3>${p.name}</h3><div class="price">৳${p.price.toLocaleString('en-IN')}</div><button class="add" onclick="addCart(${p.id})">কার্টে যোগ করুন +</button></div></div>`).join(''):'<p>কোনো পণ্য পাওয়া যায়নি।</p>';
+ const q=$("search").value.trim().toLowerCase();
+ const list=products.filter(p=>{
+  const matchCategory=category==="all"||categoryKey(p.category)===category;
+  const matchSearch=String(p.name||"").toLowerCase().includes(q);
+  return matchCategory&&matchSearch;
+ });
+
+ if(!list.length){
+  $("productsList").innerHTML='<p class="empty">কোনো পণ্য পাওয়া যায়নি। Admin Panel থেকে পণ্য যোগ করুন।</p>';
+  return;
+ }
+
+ $("productsList").innerHTML=list.map(p=>{
+  const image=p.image
+   ? `<img src="${safe(p.image)}" alt="${safe(p.name)}">`
+   : safe(p.emoji||"🛍️");
+
+  return `
+   <div class="card">
+    <div class="photo">${image}</div>
+    <div class="info">
+     <h3>${safe(p.name)}</h3>
+     <div class="price">৳${money(p.price)}</div>
+     <button class="add" data-add="${safe(p.id)}">কার্টে যোগ করুন +</button>
+    </div>
+   </div>`;
+ }).join("");
 }
-function addCart(id){let item=cart.find(x=>x.id===id);if(item)item.qty++;else cart.push({id,qty:1});showCart()}
-function changeQty(id,n){let item=cart.find(x=>x.id===id);if(!item)return;item.qty+=n;if(item.qty<=0)cart=cart.filter(x=>x.id!==id);showCart()}
+
 function showCart(){
-let el=document.getElementById('cartItems');
-if(!cart.length)el.innerHTML='<p class="empty">আপনার কার্ট এখন খালি।</p>';
-else el.innerHTML=cart.map(x=>{let p=products.find(y=>y.id===x.id);return `<div class="cart-item"><div><b>${p.name}</b><br>৳${p.price.toLocaleString('en-IN')} × ${x.qty}</div><div><button onclick="changeQty(${x.id},-1)">−</button> ${x.qty} <button onclick="changeQty(${x.id},1)">+</button></div></div>`}).join('');
-let sum=cart.reduce((s,x)=>s+products.find(p=>p.id===x.id).price*x.qty,0);
-document.getElementById('total').textContent='মোট: ৳'+sum.toLocaleString('en-IN');
+ const items=Object.entries(cart).filter(([id,item])=>
+  item.qty>0&&products.some(p=>p.id===id)
+ );
+
+ if(!items.length){
+  $("cartItems").innerHTML='<p class="empty">আপনার কার্ট এখন খালি।</p>';
+ }else{
+  $("cartItems").innerHTML=items.map(([id,item])=>{
+   const p=products.find(x=>x.id===id);
+   return `
+    <div class="cart-item">
+     <div><b>${safe(p.name)}</b><br>৳${money(p.price)} × ${item.qty}</div>
+     <div>
+      <button data-qty="-1" data-id="${safe(id)}">−</button>
+      ${item.qty}
+      <button data-qty="1" data-id="${safe(id)}">+</button>
+     </div>
+    </div>`;
+  }).join("");
+ }
+
+ const total=items.reduce((sum,[id,item])=>{
+  const p=products.find(x=>x.id===id);
+  return sum+Number(p.price||0)*item.qty;
+ },0);
+
+ $("total").textContent="মোট: ৳"+money(total);
 }
-function orderWhatsApp(){
-if(!cart.length){alert('আগে কার্টে পণ্য যোগ করুন।');return}
-let msg='আসসালামু আলাইকুম, আমি Easy Buy BD থেকে অর্ডার করতে চাই:%0A';
-cart.forEach(x=>{let p=products.find(y=>y.id===x.id);msg+=`%0A${p.name} × ${x.qty} = ৳${p.price*x.qty}`});
-let sum=cart.reduce((s,x)=>s+products.find(p=>p.id===x.id).price*x.qty,0);
-msg+=`%0A%0Aমোট: ৳${sum}`;
-window.open('https://wa.me/8801705512676?text='+msg,'_blank');
-}
-showProducts();showCart();
+
+$("productsList").addEventListener("click",e=>{
+ const btn=e.target.closest("[data-add]");
+ if(!btn)return;
+ const id=btn.dataset.add;
+ if(!products.some(p=>p.id===id))return;
+ cart[id]??={qty:0};
+ cart[id].qty++;
+ showCart();
+});
+
+$("cartItems").addEventListener("click",e=>{
+ const btn=e.target.closest("[data-qty]");
+ if(!btn)return;
+ const id=btn.dataset.id;
+ if(!cart[id])return;
+ cart[id].qty+=Number(btn.dataset.qty);
+ if(cart[id].qty<=0)delete cart[id];
+ showCart();
+});
+
+$("search").addEventListener("input",showProducts);
+
+document.querySelector(".categories").addEventListener("click",e=>{
+ const btn=e.target.closest("[data-cat]");
+ if(!btn)return;
+ category=btn.dataset.cat;
+ document.querySelectorAll(".categories button").forEach(b=>b.classList.remove("active"));
+ btn.classList.add("active");
+ showProducts();
+});
+
+$("orderBtn").addEventListener("click",()=>{
+ const items=Object.entries(cart).filter(([id,item])=>
+  item.qty>0&&products.some(p=>p.id===id)
+ );
+ if(!items.length){
+  alert("আগে কার্টে পণ্য যোগ করুন।");
+  return;
+ }
+
+ let lines=["আসসালামু আলাইকুম, আমি Easy Buy BD থেকে অর্ডার করতে চাই:"];
+ let total=0;
+
+ items.forEach(([id,item])=>{
+  const p=products.find(x=>x.id===id);
+  const subtotal=Number(p.price||0)*item.qty;
+  total+=subtotal;
+  lines.push(`${p.name} × ${item.qty} = ৳${money(subtotal)}`);
+ });
+
+ lines.push("",`মোট: ৳${money(total)}`);
+ const url="https://wa.me/8801705512676?text="+encodeURIComponent(lines.join("\n"));
+ window.open(url,"_blank");
+});
+
+onSnapshot(collection(db,"products"),snapshot=>{
+ products.length=0;
+ snapshot.forEach(d=>products.push({id:d.id,...d.data()}));
+ showProducts();
+ showCart();
+},error=>{
+ $("productsList").innerHTML='<p class="empty">পণ্য লোড হয়নি। Firebase সংযোগ বা Firestore Rules পরীক্ষা করুন।</p>';
+ console.error("Firestore error:",error);
+});
+
 </script>
 </body>
 </html>
