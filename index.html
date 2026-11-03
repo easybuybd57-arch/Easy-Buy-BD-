@@ -187,6 +187,7 @@ nav a{font-size:13px;padding:9px 11px}
   <button data-cat="others">অন্যান্য</button>
  </div>
  <div id="productsList" class="products"><p>পণ্য লোড হচ্ছে...</p></div>
+ <button id="loadMoreProducts" type="button" style="display:none;width:100%;max-width:280px;margin:22px auto;padding:13px;border:0;border-radius:12px;background:#1261d6;color:white;font-weight:bold;cursor:pointer">আরও পণ্য দেখুন</button>
 </section>
 
 <section class="section" id="cart">
@@ -215,7 +216,7 @@ nav a{font-size:13px;padding:9px 11px}
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import {getFirestore,collection,onSnapshot,doc,addDoc} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import {getFirestore,collection,onSnapshot,doc,addDoc,getDocs,query,orderBy,documentId,limit,startAfter} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const firebaseConfig={
  apiKey:"AIzaSyBL_17lHmW4pD4qpfROgjh5zz0ELHqPSIw",
@@ -237,6 +238,10 @@ onSnapshot(doc(db,"settings","contact"),snapshot=>{
 const products=[];
 const cart={};
 let category="all";
+const PRODUCT_PAGE_SIZE=24;
+let lastProductDoc=null;
+let productsLoading=false;
+let productsHaveMore=true;
 
 const $=id=>document.getElementById(id);
 const money=n=>Number(n||0).toLocaleString("en-IN");
@@ -387,15 +392,28 @@ $("orderBtn").addEventListener("click",async()=>{
  finally{$("orderBtn").disabled=false;}
 });
 
-onSnapshot(collection(db,"products"),snapshot=>{
- products.length=0;
- snapshot.forEach(d=>products.push({id:d.id,...d.data()}));
- showProducts();
- showCart();
-},error=>{
- $("productsList").innerHTML='<p class="empty">পণ্য লোড হয়নি। Firebase সংযোগ বা Firestore Rules পরীক্ষা করুন।</p>';
- console.error("Firestore error:",error);
-});
+async function loadProductPage(reset=false){
+ if(productsLoading||(!productsHaveMore&&!reset))return;
+ productsLoading=true;
+ const button=$("loadMoreProducts");button.disabled=true;button.textContent="পণ্য লোড হচ্ছে...";
+ if(reset){products.length=0;lastProductDoc=null;productsHaveMore=true;showProducts();}
+ try{
+  const constraints=[orderBy(documentId()),limit(PRODUCT_PAGE_SIZE)];
+  if(lastProductDoc)constraints.splice(1,0,startAfter(lastProductDoc));
+  const snap=await getDocs(query(collection(db,"products"),...constraints));
+  snap.forEach(d=>products.push({id:d.id,...d.data()}));
+  if(!snap.empty)lastProductDoc=snap.docs[snap.docs.length-1];
+  productsHaveMore=snap.size===PRODUCT_PAGE_SIZE;
+  showProducts();showCart();
+  button.style.display=productsHaveMore?"block":"none";button.textContent="আরও পণ্য দেখুন";
+ }catch(error){
+  button.style.display="block";button.textContent="আবার চেষ্টা করুন";
+  $("productsList").innerHTML='<p class="empty">পণ্য লোড হয়নি। Firebase সংযোগ বা Firestore Rules পরীক্ষা করুন।</p>';
+  console.error("Firestore product paging error:",error);
+ }finally{productsLoading=false;button.disabled=false;}
+}
+$("loadMoreProducts").addEventListener("click",()=>loadProductPage());
+loadProductPage(true);
 
 
 // Easy Buy BD Banner Slider
