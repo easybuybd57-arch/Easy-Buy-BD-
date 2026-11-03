@@ -92,7 +92,7 @@ let msg='আসসালামু আলাইকুম, আমি Easy Buy BD �
 cart.forEach(x=>{let p=products.find(y=>y.id===x.id);msg+=`%0A${p.name} × ${x.qty} = ৳${p.price*x.qty}`});
 let sum=cart.reduce((s,x)=>s+products.find(p=>p.id===x.id).price*x.qty,0);
 msg+=`%0A%0Aমোট: ৳${sum}`;
-window.open('https://wa.me/8801705512676?text='+msg,'_blank');
+window.open('https://wa.me/8801705511676?text='+msg,'_blank');
 }
 showProducts();showCart();
 </script>
