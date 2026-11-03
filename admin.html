@@ -61,6 +61,26 @@ hr{border:0;border-top:1px solid var(--line);margin:20px 0}
  .form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}
  #login{padding:23px;margin:10vh auto}
 }
+
+/* Compact, tap-to-open admin tools */
+.tool-fold{border:1px solid #e2eaf5;border-radius:15px;background:#fff;overflow:hidden}
+.tool-fold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:11px;padding:13px 15px;min-height:62px;background:linear-gradient(110deg,#f8fbff,#eef5ff);font-weight:700}
+.tool-fold>summary::-webkit-details-marker{display:none}
+.tool-fold>summary:after{content:"＋";margin-left:auto;color:#1769e0;font-size:22px;font-weight:500}
+.tool-fold[open]>summary:after{content:"−"}
+.tool-fold[open]>summary{border-bottom:1px solid #e5eaf2}
+.tool-fold>.form-grid,.tool-fold>label,.tool-fold>input,.tool-fold>button,.tool-fold>.file-field,.tool-fold>#ordersStatus,.tool-fold>#ordersList,.tool-fold>h3,.tool-fold>p{margin-left:14px;margin-right:14px;width:calc(100% - 28px)}
+.tool-fold>.form-grid{width:auto;margin-top:8px;margin-bottom:12px}
+.tool-fold>#ordersList{margin-top:12px;margin-bottom:14px}
+.tool-fold>#ordersStatus{display:block;margin-top:10px}
+.tool-fold>label:first-of-type{margin-top:16px}
+.tool-fold>button:last-of-type{margin-bottom:16px}
+.tool-summary .section-heading{margin:0;flex:1}
+.tool-summary .section-icon{width:36px;height:36px;border-radius:11px;font-size:18px}
+.tool-summary .section-heading h3{font-size:15px;margin:0}
+.tool-summary .section-note{font-size:11px;margin-top:3px;font-weight:400}
+.panel-section{padding:12px;margin-bottom:11px;border-radius:16px}
+@media(max-width:640px){.tool-fold>summary{padding:11px 12px;min-height:58px}.tool-summary .section-note{font-size:10px}.panel-section{padding:10px}}
 </style>
 </head>
 <body>
@@ -88,16 +108,16 @@ hr{border:0;border-top:1px solid var(--line);margin:20px 0}
  <div class="stat-card"><div class="stat-icon">🖼️</div><p class="stat-label">হোম ব্যানার</p><p class="stat-value" id="bannerCount">—</p></div>
 </section>
 <section id="ordersSection" class="panel-section">
- <div class="section-heading"><div class="section-icon">📦</div><div><h3>অর্ডার ম্যানেজমেন্ট</h3><p class="section-note">গ্রাহকের অর্ডার দেখুন এবং ডেলিভারির ধাপ আপডেট করুন।</p></div></div>
+ <details class="tool-fold"><summary class="tool-summary"><div class="section-icon">📦</div><div><h3>অর্ডার ম্যানেজমেন্ট</h3><p class="section-note">গ্রাহকের অর্ডার দেখুন এবং ডেলিভারির ধাপ আপডেট করুন।</p></div></summary>
  <button id="refreshOrdersBtn" type="button">↻ অর্ডার Refresh করুন</button><p id="ordersStatus" role="status"></p><div id="ordersList">অর্ডার লোড হচ্ছে...</div>
-</section>
+</details></section>
 <section id="contactSection" class="panel-section">
- <div class="section-heading"><div class="section-icon">📞</div><div><h3>WhatsApp নম্বর সেটিংস</h3><p class="section-note">অর্ডারের WhatsApp নম্বর পরিবর্তন করুন।</p></div></div>
+ <details class="tool-fold"><summary class="tool-summary"><div class="section-icon">📞</div><div><h3>WhatsApp নম্বর সেটিংস</h3><p class="section-note">অর্ডারের WhatsApp নম্বর পরিবর্তন করুন।</p></div></summary>
  <label for="whatsappNumber">অর্ডার নেওয়ার WhatsApp নম্বর</label><input id="whatsappNumber" type="tel" inputmode="numeric" placeholder="01705511676" value="01705511676">
  <button id="saveWhatsappBtn" type="button">নম্বর Save করুন</button><p id="whatsappStatus" role="status"></p>
-</section>
+</details></section>
 <section id="productSection" class="panel-section">
- <div class="section-heading"><div class="section-icon">➕</div><div><h3>নতুন পণ্য যোগ করুন</h3><p class="section-note">পণ্যের তথ্য ও ছবি দিয়ে স্টোরে প্রকাশ করুন।</p></div></div>
+ <details class="tool-fold"><summary class="tool-summary"><div class="section-icon">➕</div><div><h3>নতুন পণ্য যোগ করুন</h3><p class="section-note">পণ্যের তথ্য ও ছবি দিয়ে স্টোরে প্রকাশ করুন।</p></div></summary>
  <div class="form-grid">
   <div><label for="name">পণ্যের নাম</label><input id="name" placeholder="যেমন: Bluetooth Headphone"></div>
   <div><label for="price">পণ্যের দাম (৳)</label><input id="price" type="number" min="1" placeholder="পণ্যের দাম"></div>
@@ -106,12 +126,12 @@ hr{border:0;border-top:1px solid var(--line);margin:20px 0}
   <div class="full"><label for="photo">পণ্যের ছবি</label><div class="file-field"><input id="photo" type="file" accept="image/*"><img id="preview" alt="ছবির প্রিভিউ"></div></div>
   <div class="full"><button id="addBtn">＋ পণ্য যোগ করুন</button><p id="status" role="status"></p></div>
  </div>
-</section>
+</details></section>
 <section id="bannerSection" class="panel-section">
- <div class="section-heading"><div class="section-icon">🖼️</div><div><h3>হোমপেজ ব্যানার</h3><p class="section-note">স্টোরের হোমপেজের জন্য নতুন ব্যানার যোগ ও পরিচালনা করুন।</p></div></div>
+ <details class="tool-fold"><summary class="tool-summary"><div class="section-icon">🖼️</div><div><h3>হোমপেজ ব্যানার</h3><p class="section-note">স্টোরের হোমপেজের জন্য নতুন ব্যানার যোগ ও পরিচালনা করুন।</p></div></summary>
  <label for="bannerPhoto">ব্যানার ছবি নির্বাচন করুন</label><div class="file-field"><input id="bannerPhoto" type="file" accept="image/*"><img id="bannerPreview" alt="ব্যানার প্রিভিউ"></div>
  <button id="addBannerBtn">＋ ব্যানার যোগ করুন</button><p id="bannerStatus" role="status"></p><h3 style="margin-top:22px">আপনার ব্যানারসমূহ</h3><div id="bannerList">লোড হচ্ছে...</div>
-</section>
+</details></section>
 <section id="productsSection" class="panel-section">
  <div class="section-heading"><div class="section-icon">🛒</div><div><h3>আপনার পণ্যসমূহ</h3><p class="section-note">প্রকাশিত পণ্য দেখুন এবং প্রয়োজন হলে মুছুন।</p></div></div>
  <div id="list">লোড হচ্ছে...</div>
