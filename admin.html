@@ -64,7 +64,7 @@ button{background:#087b45;color:white;border:0;font-weight:bold}
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut,setPersistence,inMemoryPersistence} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import {getFirestore,collection,addDoc,getDocs,deleteDoc,doc} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const firebaseConfig={
@@ -79,6 +79,7 @@ appId:"1:246521445162:web:d21e43015352ec008d7c53"
 const ADMIN_UID="idWU2lGPmleyQW2L1ExB45IiIz02";
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
+await setPersistence(auth,inMemoryPersistence);
 const db=getFirestore(app);
 const $=id=>document.getElementById(id);
 
