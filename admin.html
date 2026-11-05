@@ -286,6 +286,7 @@ if(user && user.uid===ADMIN_UID){
 document.body.classList.add("admin-authenticated");
 $("login").classList.add("hidden");
 $("panel").classList.remove("hidden");
+showAdminView("dashboard");
 loadProducts();
 loadBanners();
 loadWhatsappSetting();
