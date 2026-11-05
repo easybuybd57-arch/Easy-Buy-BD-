@@ -388,6 +388,19 @@ $("addBtn").disabled=false;
 };
 
 
+
+/* Add Banner shortcut: jump to the banner uploader and open image selection immediately */
+function openBannerUploader(event){
+ event.preventDefault();
+ const section=$("bannerSection");
+ const picker=$("bannerPhoto");
+ if(section) section.scrollIntoView({behavior:"instant",block:"center"});
+ if(picker) picker.click();
+}
+document.querySelectorAll('.quick-action.q-purple, .side-nav a[href="#bannerSection"]').forEach(link=>{
+ if(link.textContent.toLowerCase().includes("add banner")) link.addEventListener("click",openBannerUploader);
+});
+
 // Banner image preview
 $("bannerPhoto").onchange=()=>{
  const file=$("bannerPhoto").files[0];
