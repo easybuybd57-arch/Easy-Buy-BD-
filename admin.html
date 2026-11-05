@@ -389,16 +389,60 @@ $("addBtn").disabled=false;
 
 
 
-/* Add Banner shortcut: jump to the banner uploader and open image selection immediately */
-function openBannerUploader(event){
- event.preventDefault();
- const section=$("bannerSection");
- const picker=$("bannerPhoto");
- if(section) section.scrollIntoView({behavior:"instant",block:"center"});
- if(picker) picker.click();
+
+
+/* True click-to-view admin navigation: show one screen at a time, never scroll to sections */
+function showAdminView(view){
+ const $id=id=>document.getElementById(id);
+ const set=(el,display)=>{if(el)el.style.display=display;};
+ ["dashboard","ordersSection","productsSection","productSection","bannerSection","contactSection","customerInfo"].forEach(id=>set($id(id),"none"));
+ set(document.querySelector(".dashboard-grid"),"none");
+ set(document.querySelector(".management-grid"),"none");
+ set(document.querySelector(".welcome-banner"),"none");
+ set(document.querySelector(".right-column"),"none");
+ set(document.querySelector(".center-column"),"none");
+ if(view==="dashboard"){
+  set($id("dashboard"),"grid");
+  set(document.querySelector(".dashboard-grid"),"grid");
+  set(document.querySelector(".center-column"),"block");
+  set(document.querySelector(".welcome-banner"),"flex");
+  set($id("ordersSection"),"block");
+  set($id("productsSection"),"block");
+  set(document.querySelector(".right-column"),"block");
+  set($id("customerInfo"),"block");
+ }else if(view==="orders"||view==="products"){
+  set(document.querySelector(".dashboard-grid"),"block");
+  set(document.querySelector(".center-column"),"block");
+  if(view==="orders")set($id("ordersSection"),"block");
+  if(view==="products")set($id("productsSection"),"block");
+ }else if(view==="add-product"||view==="banners"||view==="settings"){
+  set(document.querySelector(".management-grid"),"block");
+  if(view==="add-product")set($id("productSection"),"block");
+  if(view==="banners")set($id("bannerSection"),"block");
+  if(view==="settings")set($id("contactSection"),"block");
+ }else if(view==="customers"){
+  set(document.querySelector(".dashboard-grid"),"block");
+  set(document.querySelector(".right-column"),"block");
+  set($id("customerInfo"),"block");
+ }
+ document.querySelectorAll(".side-nav a").forEach(a=>a.classList.remove("active","active-lite"));
+ const activeMap={dashboard:"#dashboard", "add-product":"#productSection",products:"#productsSection",banners:"#bannerSection",orders:"#ordersSection",customers:"#customerInfo",settings:"#contactSection"};
+ const active=document.querySelector('.side-nav a[href="'+(activeMap[view]||"#dashboard")+'"]');
+ if(active)active.classList.add("active");
+ document.querySelectorAll(".quick-action").forEach(a=>a.setAttribute("aria-current","false"));
+ document.body.dataset.adminView=view;
+ window.scrollTo({top:0,behavior:"instant"});
 }
-document.querySelectorAll('.quick-action.q-purple, .side-nav a[href="#bannerSection"]').forEach(link=>{
- if(link.textContent.toLowerCase().includes("add banner")) link.addEventListener("click",openBannerUploader);
+function adminViewFromHash(hash){
+ return ({"#dashboard":"dashboard","#productSection":"add-product","#productsSection":"products","#bannerSection":"banners","#ordersSection":"orders","#customerInfo":"customers","#contactSection":"settings"})[hash]||null;
+}
+document.addEventListener("click",event=>{
+ const link=event.target.closest('a[href^="#"]');
+ if(!link)return;
+ const view=adminViewFromHash(link.getAttribute("href"));
+ if(!view)return;
+ event.preventDefault();
+ showAdminView(view);
 });
 
 // Banner image preview
