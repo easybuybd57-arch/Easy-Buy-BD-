@@ -392,58 +392,44 @@ $("addBtn").disabled=false;
 
 
 
-/* True click-to-view admin navigation: show one screen at a time, never scroll to sections */
+/* Reliable click-to-view navigation: show one admin section at a time */
 function showAdminView(view){
- const $id=id=>document.getElementById(id);
- const set=(el,display)=>{if(el)el.style.display=display;};
- ["dashboard","ordersSection","productsSection","productSection","bannerSection","contactSection","customerInfo"].forEach(id=>set($id(id),"none"));
- set(document.querySelector(".dashboard-grid"),"none");
- set(document.querySelector(".management-grid"),"none");
- set(document.querySelector(".welcome-banner"),"none");
- set(document.querySelector(".right-column"),"none");
- set(document.querySelector(".center-column"),"none");
+ const byId=id=>document.getElementById(id);
+ const display=(el,value)=>{if(el)el.style.setProperty("display",value,"important");};
+ const dashboard=byId("dashboard");
+ const dashGrid=document.querySelector(".dashboard-grid");
+ const center=document.querySelector(".center-column");
+ const right=document.querySelector(".right-column");
+ const welcome=document.querySelector(".welcome-banner");
+ const management=document.querySelector(".management-grid");
+ const sections=["ordersSection","productsSection","productSection","bannerSection","contactSection","customerInfo"];
+ sections.forEach(id=>display(byId(id),"none"));
+ [dashboard,dashGrid,center,right,welcome,management].forEach(el=>display(el,"none"));
  if(view==="dashboard"){
-  set($id("dashboard"),"grid");
-  set(document.querySelector(".dashboard-grid"),"grid");
-  set(document.querySelector(".center-column"),"block");
-  set(document.querySelector(".welcome-banner"),"flex");
-  set($id("ordersSection"),"block");
-  set($id("productsSection"),"block");
-  set(document.querySelector(".right-column"),"block");
-  set($id("customerInfo"),"block");
- }else if(view==="orders"||view==="products"){
-  set(document.querySelector(".dashboard-grid"),"block");
-  set(document.querySelector(".center-column"),"block");
-  if(view==="orders")set($id("ordersSection"),"block");
-  if(view==="products")set($id("productsSection"),"block");
- }else if(view==="add-product"||view==="banners"||view==="settings"){
-  set(document.querySelector(".management-grid"),"block");
-  if(view==="add-product")set($id("productSection"),"block");
-  if(view==="banners")set($id("bannerSection"),"block");
-  if(view==="settings")set($id("contactSection"),"block");
- }else if(view==="customers"){
-  set(document.querySelector(".dashboard-grid"),"block");
-  set(document.querySelector(".right-column"),"block");
-  set($id("customerInfo"),"block");
+  display(dashboard,"grid");display(dashGrid,"grid");display(center,"block");display(welcome,"flex");
+  display(byId("ordersSection"),"block");display(byId("productsSection"),"block");display(right,"block");display(byId("customerInfo"),"block");
+ }else if(view==="orders"||view==="products"||view==="customers"){
+  display(dashGrid,"grid");display(center,"block");
+  if(view==="orders")display(byId("ordersSection"),"block");
+  if(view==="products")display(byId("productsSection"),"block");
+  if(view==="customers"){display(right,"block");display(byId("customerInfo"),"block");}
+ }else{
+  display(management,"grid");
+  const target={"add-product":"productSection",banners:"bannerSection",settings:"contactSection"}[view];
+  if(target)display(byId(target),"block");
  }
  document.querySelectorAll(".side-nav a").forEach(a=>a.classList.remove("active","active-lite"));
- const activeMap={dashboard:"#dashboard", "add-product":"#productSection",products:"#productsSection",banners:"#bannerSection",orders:"#ordersSection",customers:"#customerInfo",settings:"#contactSection"};
- const active=document.querySelector('.side-nav a[href="'+(activeMap[view]||"#dashboard")+'"]');
- if(active)active.classList.add("active");
- document.querySelectorAll(".quick-action").forEach(a=>a.setAttribute("aria-current","false"));
+ const activeHref={"dashboard":"#dashboard","add-product":"#productSection","products":"#productsSection","banners":"#bannerSection","orders":"#ordersSection","customers":"#customerInfo","settings":"#contactSection"}[view];
+ document.querySelectorAll(".side-nav a").forEach(a=>{if(a.getAttribute("href")===activeHref)a.classList.add("active");});
  document.body.dataset.adminView=view;
- window.scrollTo({top:0,behavior:"instant"});
+ window.scrollTo(0,0);
 }
 function adminViewFromHash(hash){
  return ({"#dashboard":"dashboard","#productSection":"add-product","#productsSection":"products","#bannerSection":"banners","#ordersSection":"orders","#customerInfo":"customers","#contactSection":"settings"})[hash]||null;
 }
-document.addEventListener("click",event=>{
- const link=event.target.closest('a[href^="#"]');
- if(!link)return;
+document.querySelectorAll('.side-nav a[href^="#"],.quick-action[href^="#"],.section-title a[href^="#"]').forEach(link=>{
  const view=adminViewFromHash(link.getAttribute("href"));
- if(!view)return;
- event.preventDefault();
- showAdminView(view);
+ if(view)link.addEventListener("click",event=>{event.preventDefault();showAdminView(view);});
 });
 
 // Banner image preview
